@@ -50,6 +50,34 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--indigo);box-shadow:0 0 0 3px rgba(57,73,171,0.1)}
 .field textarea{resize:vertical;min-height:70px}
 .field input[readonly]{background:#f8f9fc;color:var(--muted)}
+
+/* ── COMBOBOX STYLES ─────────────────────────────────── */
+.combobox-wrap{position:relative;width:100%}
+.combobox-input-row{display:flex;align-items:center;position:relative}
+.combobox-input{border:1.5px solid var(--border);border-radius:7px;padding:9px 36px 9px 12px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:white;transition:all 0.2s;outline:none;width:100%}
+.combobox-input:focus{border-color:var(--indigo);box-shadow:0 0 0 3px rgba(57,73,171,0.1)}
+.combobox-arrow{position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--muted);font-size:11px;transition:transform 0.2s}
+.combobox-wrap.open .combobox-arrow{transform:translateY(-50%) rotate(180deg)}
+.combobox-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:white;border:1.5px solid var(--indigo);border-radius:9px;box-shadow:0 8px 24px rgba(26,35,126,0.14);z-index:500;overflow:hidden;display:none;animation:dropIn 0.15s ease}
+.combobox-wrap.open .combobox-dropdown{display:block}
+@keyframes dropIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.combobox-search-row{padding:8px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px}
+.combobox-search-icon{font-size:12px;color:var(--muted);flex-shrink:0}
+.combobox-search{border:none;outline:none;font-size:12px;font-family:'DM Sans',sans-serif;color:var(--text);width:100%;background:transparent}
+.combobox-list{max-height:180px;overflow-y:auto}
+.combobox-list::-webkit-scrollbar{width:4px}
+.combobox-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+.combobox-option{padding:9px 12px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);cursor:pointer;display:flex;align-items:center;gap:8px;transition:background 0.15s}
+.combobox-option:hover{background:#f0f2f8}
+.combobox-option.selected{background:#e8eaf6;color:var(--navy);font-weight:600}
+.combobox-option .opt-icon{font-size:13px;flex-shrink:0}
+.combobox-option.add-new{color:var(--indigo);font-weight:600;border-top:1px solid var(--border);font-size:12px}
+.combobox-option.add-new:hover{background:#e8eaf6}
+.combobox-empty{padding:12px;font-size:12px;color:var(--muted);text-align:center}
+.combobox-badge{display:inline-block;background:#e8eaf6;color:var(--indigo);border-radius:4px;font-size:9px;font-weight:700;padding:1px 5px;margin-left:auto;text-transform:uppercase;letter-spacing:0.4px}
+.combobox-badge.new-badge{background:#e8f5e9;color:var(--green)}
+/* ── END COMBOBOX ─────────────────────────────────────── */
+
 .dyn-wrap{border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden}
 .dyn-head{background:#f0f2f8;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
 .dyn-head span{font-size:12px;font-weight:700;color:var(--navy)}
@@ -128,7 +156,29 @@ canvas.sig-canvas{display:block;cursor:crosshair;touch-action:none;width:100%;he
       <div class="section-header"><div class="section-icon">🏢</div><div><div class="section-title">Customer & Report Info</div><div class="section-sub">Basic report identification details</div></div></div>
       <div class="card">
         <div class="form-grid">
-          <div class="field"><label>Company Name *</label><input type="text" id="companyName" placeholder="e.g. Acme Corporation" required></div>
+
+          <!-- ── COMPANY NAME COMBOBOX ── -->
+          <div class="field">
+            <label>Company Name *</label>
+            <div class="combobox-wrap" id="companyComboWrap">
+              <div class="combobox-input-row">
+                <input type="text" class="combobox-input" id="companyName"
+                       placeholder="Select or type company name…"
+                       autocomplete="off"
+                       required>
+                <span class="combobox-arrow">▼</span>
+              </div>
+              <div class="combobox-dropdown" id="companyDropdown">
+                <div class="combobox-search-row">
+                  <span class="combobox-search-icon">🔍</span>
+                  <input type="text" class="combobox-search" id="companySearch" placeholder="Search companies…">
+                </div>
+                <div class="combobox-list" id="companyList"></div>
+              </div>
+            </div>
+          </div>
+          <!-- ── END COMBOBOX ── -->
+
           <div class="field"><label>Contact Person</label><input type="text" id="contactName" placeholder="e.g. John Smith"></div>
           <div class="field"><label>Contact Email</label><input type="email" id="contactEmail" placeholder="admin@company.com"></div>
           <div class="field"><label>NAS Model</label><input type="text" id="nasModel" placeholder="e.g. ReadyNAS 526X"></div>
@@ -419,6 +469,139 @@ canvas.sig-canvas{display:block;cursor:crosshair;touch-action:none;width:100%;he
 <script>
 const GAS_BACKEND_URL = "https://script.google.com/macros/s/AKfycbx6rUYSmR2YALd9O5BnMLn8hD_JyxqEuJ_IxzxcIV25jrI-8mbtxp5Fa3gsEt2BqdZf/exec";
 
+// ══════════════════════════════════════════════════════════
+//  COMPANY COMBOBOX
+// ══════════════════════════════════════════════════════════
+// ── Company list: presets + any user-added ones (in-memory) ──
+let companyList = [
+  'Fusion De Nova',
+  'Visha Industrial Plastic',
+  'Preciso Fashion',
+  'Pushkar Insulation & Packaging Pvt Ltd',
+  'Waves and Threads',
+];
+const PRESET_COUNT = companyList.length; // first N are presets
+let comboOpen = false;
+
+// Render dropdown options based on a filter string
+function renderCompanyOptions(filter) {
+  const listEl    = document.getElementById('companyList');
+  const inputVal  = document.getElementById('companyName').value.trim();
+  const q         = (filter || '').toLowerCase();
+
+  // Filter the master list
+  const filtered = companyList.filter(c => !q || c.toLowerCase().includes(q));
+
+  // Is the current typed value a brand-new company not yet in the list?
+  const isNew = inputVal !== '' &&
+    !companyList.some(c => c.toLowerCase() === inputVal.toLowerCase());
+
+  let html = '';
+
+  if (filtered.length === 0 && !isNew) {
+    html = `<div class="combobox-empty">No companies found</div>`;
+  } else {
+    filtered.forEach((c, idx) => {
+      const isPreset   = idx < PRESET_COUNT || companyList.indexOf(c) < PRESET_COUNT;
+      const isSelected = c.toLowerCase() === inputVal.toLowerCase();
+      const safeName   = c.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+      html += `
+        <div class="combobox-option${isSelected ? ' selected' : ''}"
+             onclick="selectCompany('${safeName}')">
+          <span class="opt-icon">🏢</span>
+          <span>${c}</span>
+          ${!isPreset ? '<span class="combobox-badge new-badge">NEW</span>' : ''}
+        </div>`;
+    });
+  }
+
+  // "Add new" button shown only when the typed value doesn't already exist
+  if (isNew) {
+    const safeInput = inputVal.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    html += `
+      <div class="combobox-option add-new" onclick="addNewCompany()">
+        <span class="opt-icon">➕</span>
+        <span>Add &ldquo;<strong>${safeInput}</strong>&rdquo; as new company</span>
+      </div>`;
+  }
+
+  listEl.innerHTML = html;
+}
+
+// Called when user clicks a company in the list
+function selectCompany(name) {
+  document.getElementById('companyName').value = name;
+  closeCombo();
+}
+
+// Called when user clicks "Add …" or presses Enter with a new name
+function addNewCompany() {
+  const val = document.getElementById('companyName').value.trim();
+  if (!val) return;
+  if (!companyList.some(c => c.toLowerCase() === val.toLowerCase())) {
+    companyList.push(val);          // ← added to master list permanently
+    showToast(`✅ "${val}" added to company list`, 'ok');
+  }
+  // Keep the typed value selected and close
+  closeCombo();
+}
+
+function openCombo() {
+  comboOpen = true;
+  document.getElementById('companyComboWrap').classList.add('open');
+  // Reset internal search box, render full list
+  document.getElementById('companySearch').value = '';
+  renderCompanyOptions('');
+  setTimeout(() => document.getElementById('companySearch').focus(), 60);
+}
+
+function closeCombo() {
+  comboOpen = false;
+  document.getElementById('companyComboWrap').classList.remove('open');
+}
+
+// Wire up events after DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  const input   = document.getElementById('companyName');
+  const wrap    = document.getElementById('companyComboWrap');
+  const searchEl = document.getElementById('companySearch');
+
+  // Open on focus / click
+  input.addEventListener('focus', openCombo);
+  input.addEventListener('click', () => { if (!comboOpen) openCombo(); });
+
+  // Typing in main input: open dropdown and filter by what's typed
+  input.addEventListener('input', () => {
+    if (!comboOpen) openCombo();
+    renderCompanyOptions(input.value);   // filter by typed text
+  });
+
+  // Typing in the internal search box: filter the list independently
+  searchEl.addEventListener('input', () => {
+    renderCompanyOptions(searchEl.value);
+  });
+
+  // Enter key → add new company (if novel) and close
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addNewCompany();
+    }
+    if (e.key === 'Escape') closeCombo();
+  });
+
+  // Click outside → close
+  document.addEventListener('click', e => {
+    if (comboOpen && !wrap.contains(e.target)) closeCombo();
+  });
+
+  // Initial render (list is populated but dropdown is closed)
+  renderCompanyOptions('');
+});
+
+// ══════════════════════════════════════════════════════════
+//  STEPS & NAVIGATION
+// ══════════════════════════════════════════════════════════
 const STEPS = [
   {icon:'🏢',label:'Customer'},{icon:'🔧',label:'Firmware'},{icon:'💾',label:'Volume/Disk'},
   {icon:'❤️',label:'Health'},{icon:'⚡',label:'Performance'},{icon:'🗄️',label:'Backup'},
@@ -435,7 +618,6 @@ STEPS.forEach((s,i) => {
     <div class="step-text">${s.icon} ${s.label}</div></div>`;
 });
 
-// ── FIX: track canvas init state ─────────────────────────
 const canvasReady = { tech: false, cust: false };
 
 function goTo(step) {
@@ -454,8 +636,6 @@ function goTo(step) {
   document.getElementById('navInfo').textContent = `Step ${step+1} of ${totalSteps}`;
   document.getElementById('topStepBadge').textContent = `Step ${step+1} of ${totalSteps}`;
   window.scrollTo({top:0, behavior:'smooth'});
-
-  // ── FIX: init canvases when step 11 becomes visible ────
   if (step === 11) {
     requestAnimationFrame(() => {
       setTimeout(() => {
@@ -477,7 +657,6 @@ window.addEventListener('load', () => {
   document.getElementById('techSignedDate').value = now.toISOString().split('T')[0];
   const next = new Date(now.getFullYear(), now.getMonth()+1, 1);
   document.getElementById('nextMaintenance').value = next.toISOString().split('T')[0];
-  // DO NOT init canvases here — they are hidden and have 0 width
 });
 
 function calcFree(){
@@ -523,13 +702,12 @@ const sigState = {
   cust:{drawing:false,lastX:0,lastY:0,mode:'draw'}
 };
 
-// ── FIX: separate resize from full init ──────────────────
 function resizeCanvas(id) {
   const canvas = document.getElementById(id+'Canvas');
   const ctx = canvas.getContext('2d');
   const ratio = window.devicePixelRatio||1;
   const rect = canvas.getBoundingClientRect();
-  if (rect.width === 0) return; // still hidden, skip
+  if (rect.width === 0) return;
   canvas.width = rect.width * ratio;
   canvas.height = 110 * ratio;
   ctx.scale(ratio, ratio);
@@ -540,11 +718,10 @@ function resizeCanvas(id) {
 function initCanvas(id){
   const canvas = document.getElementById(id+'Canvas');
   const ctx = canvas.getContext('2d');
-
   function resize(){
     const ratio = window.devicePixelRatio||1;
     const rect = canvas.getBoundingClientRect();
-    if (rect.width === 0) return; // guard against hidden canvas
+    if (rect.width === 0) return;
     canvas.width = rect.width*ratio;
     canvas.height = 110*ratio;
     ctx.scale(ratio,ratio);
@@ -553,7 +730,6 @@ function initCanvas(id){
   }
   resize();
   window.addEventListener('resize',()=>{ setTimeout(resize,50); });
-
   function getPos(e){
     const rect=canvas.getBoundingClientRect();
     const src=e.touches?e.touches[0]:e;
@@ -632,29 +808,22 @@ function updatePreview(id){
   document.getElementById(id+'Preview').innerHTML=`<img src="${canvas.toDataURL('image/png')}" style="max-height:34px;">`;
 }
 
-// ── FIX: safe isCanvasEmpty — guards against 0-size canvas ──
 function isCanvasEmpty(canvas){
   try {
     if (!canvas || canvas.width === 0 || canvas.height === 0) return true;
     const d = canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data;
     return !d.some((v,i)=>i%4===3&&v>0);
-  } catch(e) {
-    return true; // treat error as empty (no signature)
-  }
+  } catch(e) { return true; }
 }
 
-// ── FIX: getSig forces resize if canvas still 0-width ────
 function getSig(id){
   const canvas = document.getElementById(id+'Canvas');
   if (!canvas) return '';
-  if (canvas.width === 0 || canvas.height === 0) {
-    resizeCanvas(id); // last-chance resize
-  }
-  if (canvas.width === 0 || canvas.height === 0) return ''; // still 0, give up
+  if (canvas.width === 0 || canvas.height === 0) { resizeCanvas(id); }
+  if (canvas.width === 0 || canvas.height === 0) return '';
   return isCanvasEmpty(canvas) ? '' : canvas.toDataURL('image/png');
 }
 
-// ── HELPERS ───────────────────────────────────────────────
 function g(id){ return (document.getElementById(id)||{}).value||''; }
 
 function getData(){
@@ -698,7 +867,6 @@ function getData(){
   };
 }
 
-// ── SUBMIT TO GOOGLE APPS SCRIPT ──────────────────────────
 async function submitToGAS(r) {
   document.getElementById('overlayText').textContent = 'Saving to Google Drive...';
   try {
@@ -728,7 +896,6 @@ async function submitToGAS(r) {
   }
 }
 
-// ── MAIN PDF GENERATION ───────────────────────────────────
 async function generatePDF(){
   if(!g('companyName')){ showToast('Please enter Company Name!','err'); goTo(0); return; }
   if(!g('techName')){ showToast('Please enter Technician Name!','err'); return; }
@@ -760,9 +927,7 @@ async function generatePDF(){
     doc.setFillColor(250, 204, 112); doc.rect(0,26,W,6,'F');
     doc.setTextColor(0,0,0);
     doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.text('Wakar Technology India Private Limited',pL,10);
-     doc.setFont('helvetica','bold'); doc.setFontSize(16); doc.text('NETGEAR Monthly Maintenance Report',pL,17);         
-
-
+    doc.setFont('helvetica','bold'); doc.setFontSize(16); doc.text('NETGEAR Monthly Maintenance Report',pL,17);
     doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.text('Comprehensive System Health & Status Analysis',pL,23);
     doc.text(r.monthYear||'',W-pR,9,{align:'right'});
     doc.text('Report ID: '+r.reportId,W-pR,14,{align:'right'});
