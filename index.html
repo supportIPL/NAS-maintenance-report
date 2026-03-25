@@ -38,8 +38,6 @@ body {
   background-image: radial-gradient(ellipse at 20% 0%, rgba(57,73,171,0.07) 0%, transparent 60%),
                     radial-gradient(ellipse at 80% 100%, rgba(0,176,255,0.05) 0%, transparent 60%);
 }
-
-/* ── TOP BAR ── */
 .topbar {
   background: linear-gradient(135deg, var(--navy) 0%, var(--indigo) 100%);
   color: white;
@@ -70,11 +68,7 @@ body {
   font-size: 12px;
   font-weight: 600;
 }
-
-/* ── MAIN LAYOUT ── */
 .app { display: flex; min-height: calc(100vh - 70px); }
-
-/* ── SIDEBAR STEPPER ── */
 .sidebar {
   width: 200px;
   flex-shrink: 0;
@@ -125,11 +119,7 @@ body {
 .step-item.done .step-num { background: var(--green); color: white; }
 .step-text { font-size: 12px; font-weight: 500; color: var(--text); }
 .step-item.active .step-text { color: var(--navy); font-weight: 700; }
-
-/* ── CONTENT ── */
 .content { flex: 1; padding: 28px 32px; max-width: 900px; }
-
-/* ── PROGRESS BAR ── */
 .progress-track {
   height: 4px;
   background: var(--border);
@@ -143,8 +133,6 @@ body {
   border-radius: 2px;
   transition: width 0.4s ease;
 }
-
-/* ── SECTION CARD ── */
 .section-card { display: none; animation: fadeSlide 0.3s ease; }
 .section-card.active { display: block; }
 @keyframes fadeSlide {
@@ -167,7 +155,6 @@ body {
 }
 .section-title { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; color: var(--navy); }
 .section-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
-
 .card {
   background: var(--card);
   border-radius: var(--radius);
@@ -186,12 +173,9 @@ body {
   padding-bottom: 10px;
   border-bottom: 1px solid var(--border);
 }
-
-/* ── FORM GRID ── */
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
 .full { grid-column: 1 / -1; }
-
 .field { display: flex; flex-direction: column; gap: 5px; }
 .field label {
   font-size: 11px;
@@ -217,8 +201,6 @@ body {
 }
 .field textarea { resize: vertical; min-height: 70px; }
 .field input[readonly] { background: #f8f9fc; color: var(--muted); }
-
-/* ── DYNAMIC TABLES ── */
 .dyn-wrap {
   border: 1.5px solid var(--border);
   border-radius: var(--radius);
@@ -287,8 +269,6 @@ table.dyn td input:focus {
   cursor: pointer;
   font-size: 11px;
 }
-
-/* ── SIGNATURE PAD ── */
 .sig-wrap {
   border: 1.5px solid var(--border);
   border-radius: var(--radius);
@@ -358,8 +338,6 @@ canvas.sig-canvas {
   margin-top: 4px;
 }
 .sig-preview img { max-height: 34px; }
-
-/* ── NAV BUTTONS ── */
 .nav-bar {
   display: flex;
   align-items: center;
@@ -396,8 +374,6 @@ canvas.sig-canvas {
 .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(46,125,50,0.4); }
 .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 .nav-info { font-size: 12px; color: var(--muted); }
-
-/* ── DIVIDER ── */
 .divider { height: 1px; background: var(--border); margin: 16px 0; }
 .sub-section-title {
   font-size: 11px;
@@ -410,8 +386,6 @@ canvas.sig-canvas {
   gap: 6px;
   margin: 14px 0 10px;
 }
-
-/* ── TOAST ── */
 .toast {
   position: fixed;
   bottom: 24px;
@@ -429,8 +403,6 @@ canvas.sig-canvas {
 .toast.ok { background: var(--green); }
 .toast.err { background: var(--red); }
 @keyframes toastIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-/* ── SPINNER OVERLAY ── */
 .overlay {
   position: fixed; inset: 0;
   background: rgba(255,255,255,0.85);
@@ -451,8 +423,6 @@ canvas.sig-canvas {
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 .overlay-text { font-size: 14px; color: var(--navy); font-weight: 600; }
-
-/* Responsive */
 @media (max-width: 700px) {
   .sidebar { display: none; }
   .form-grid { grid-template-columns: 1fr; }
@@ -794,12 +764,15 @@ canvas.sig-canvas {
           </div>
         </div>
 
-        <!-- GAS URL CONFIG -->
-        <div style="background:#e8eaf6;border-radius:8px;padding:14px 16px;border-left:4px solid var(--indigo);margin-top:16px;">
-          <b style="color:var(--navy);font-size:13px;">⚙️ Google Apps Script URL</b>
-          <p style="color:#555;font-size:12px;margin-top:4px;margin-bottom:8px;">Paste your deployed GAS Web App URL below. PDF will be saved to your Google Drive automatically.</p>
-          <input type="text" id="gasUrl" placeholder="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec"
-            style="width:100%;border:1.5px solid var(--border);border-radius:7px;padding:9px 12px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;">
+        <!-- ✅ BACKEND CONNECTED BADGE — GAS URL hardcoded, config box hidden -->
+        <input type="hidden" id="gasUrl" value="https://script.google.com/macros/s/AKfycbx6rUYSmR2YALd9O5BnMLn8hD_JyxqEuJ_IxzxcIV25jrI-8mbtxp5Fa3gsEt2BqdZf/exec">
+
+        <div style="background:#e8f5e9;border-radius:8px;padding:12px 16px;border-left:4px solid var(--green);margin-top:16px;display:flex;align-items:center;gap:10px;">
+          <span style="font-size:20px;">✅</span>
+          <div>
+            <b style="color:var(--green);font-size:13px;">Google Drive Backend Connected</b>
+            <p style="color:#555;font-size:12px;margin-top:2px;">Reports will be automatically saved to your Google Drive folder <b>"NAS Monthly Reports"</b>.</p>
+          </div>
         </div>
 
         <div style="background:var(--green-bg);border-radius:8px;padding:14px 16px;border-left:4px solid var(--green);margin-top:12px;">
@@ -833,6 +806,9 @@ canvas.sig-canvas {
 <div class="toast" id="toast"></div>
 
 <script>
+// ── HARDCODED BACKEND URL ──────────────────────────────────
+const GAS_BACKEND_URL = "https://script.google.com/macros/s/AKfycbx6rUYSmR2YALd9O5BnMLn8hD_JyxqEuJ_IxzxcIV25jrI-8mbtxp5Fa3gsEt2BqdZf/exec";
+
 // ── STEPS META ─────────────────────────────────────────────
 const STEPS = [
   {icon:'🏢',label:'Customer'},{icon:'🔧',label:'Firmware'},{icon:'💾',label:'Volume/Disk'},
@@ -1050,22 +1026,17 @@ function getData(){
 }
 
 // ── SUBMIT TO GOOGLE APPS SCRIPT ──────────────────────────
-async function submitToGAS(r, pdfBlob) {
-  const gasUrl = g('gasUrl').trim();
-  if(!gasUrl || gasUrl.includes('YOUR_SCRIPT_ID')){
-    showToast('ℹ️ No GAS URL set — PDF downloaded locally only.','ok');
-    return;
-  }
+// Uses the hardcoded GAS_BACKEND_URL constant — no user input needed
+async function submitToGAS(r) {
   document.getElementById('overlayText').textContent = 'Saving to Google Drive...';
   try {
-    const response = await fetch(gasUrl, {
+    const response = await fetch(GAS_BACKEND_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(r),
     });
     const result = await response.json();
     if(result.success){
-      // Remove any existing drive buttons
       ['pdfDownloadBtn','pdfDriveBtn'].forEach(id=>{ const el=document.getElementById(id); if(el)el.remove(); });
 
       const navBtns = document.getElementById('btnSubmit').parentNode;
@@ -1094,7 +1065,7 @@ async function submitToGAS(r, pdfBlob) {
       throw new Error(result.error || 'Unknown GAS error');
     }
   } catch(err){
-    showToast('⚠️ Drive save failed: '+err.message+' — but PDF was downloaded locally.','err');
+    showToast('⚠️ Drive save failed: '+err.message+' — PDF was downloaded locally.','err');
     console.error(err);
   }
 }
@@ -1198,7 +1169,6 @@ async function generatePDF(){
     });
     y+=17;
 
-    // Storage bar
     const total=parseFloat(r.totalCapacity)||0, used=parseFloat(r.usedCapacity)||0;
     const usedPct=total>0?Math.min(100,Math.round(used/total*100)):0;
     const barColor=usedPct>85?[198,40,40]:usedPct>70?[230,81,0]:[21,101,192];
@@ -1210,14 +1180,12 @@ async function generatePDF(){
     if(usedPct>0){ doc.setFillColor(...barColor); doc.roundedRect(pL,y,cW*usedPct/100,4,1,1,'F'); }
     y+=7; checkPage(40);
 
-    // ── FIRMWARE ──
     sectionHeader('Firmware','🔧');
     infoRow('Current Version',r.currentFirmware,false);
     infoRow('Available Version',r.availableFirmware,true);
     infoBadgeRow('Status',r.firmwareStatus,['Up-to-date','Current','OK'],false);
     y+=3; checkPage(40);
 
-    // ── VOLUME & DISK ──
     sectionHeader('Volume & Disk Configuration','💾');
     infoRow('Volume Name',r.volumeName,false);
     infoRow('Disk Type / RAID',`${r.diskType||'—'} / ${r.raidType||'—'}`,true);
@@ -1227,7 +1195,6 @@ async function generatePDF(){
     infoRow('Number of Disks',r.noOfDisks,true);
     y+=3; checkPage(40);
 
-    // ── HEALTH ──
     sectionHeader('Health Status','❤️');
     infoBadgeRow('Disk Health',r.diskHealth,['Good','Healthy','Normal','OK'],false);
     infoBadgeRow('System Health',r.systemHealth,['Good','Healthy','Normal','OK'],true);
@@ -1236,7 +1203,6 @@ async function generatePDF(){
     infoBadgeRow('Fan Status',r.fanStatus,['Normal','OK','Good'],false);
     y+=3; checkPage(50);
 
-    // ── PERFORMANCE ──
     sectionHeader('Performance','⚡');
     const perfKpis=[['Read Speed',r.avgReadSpeed+' MB/s'],['Write Speed',r.avgWriteSpeed+' MB/s'],
       ['CPU Load',r.cpuUsage+'%'],['RAM Load',r.ramUsage+'%']];
@@ -1249,7 +1215,6 @@ async function generatePDF(){
     });
     y+=15; checkPage(40);
 
-    // ── LOCAL BACKUP ──
     sectionHeader('Local / USB Backup','🗄️');
     infoBadgeRow('Backup Enabled',r.localBackupEnabled,['Yes','Enabled'],false);
     infoRow('USB Device',r.usbDevice,true);
@@ -1259,7 +1224,6 @@ async function generatePDF(){
     if(r.localBackupLog) infoRow('Log Notes',r.localBackupLog.substring(0,60),true);
     y+=3; checkPage(40);
 
-    // ── CLOUD BACKUP ──
     sectionHeader('Cloud Backup','☁️');
     infoBadgeRow('Backup Enabled',r.cloudBackupEnabled,['Yes','Enabled'],false);
     infoRow('Cloud Provider',r.cloudProvider,true);
@@ -1268,7 +1232,6 @@ async function generatePDF(){
     infoRow('Backup Size',r.cloudBackupSize?r.cloudBackupSize+' GB':'—',false);
     y+=3; checkPage(40);
 
-    // ── M365 ──
     sectionHeader('Microsoft 365 Cloud Backup','🏢');
     infoBadgeRow('M365 Backup Enabled',r.ms365Enabled,['Yes','Enabled'],false);
     infoRow('Last Backup Date',r.ms365LastBackup,true);
@@ -1276,14 +1239,12 @@ async function generatePDF(){
     infoBadgeRow('Backup Status',r.ms365Status,['Success','OK','Completed'],true);
     y+=3; checkPage(30);
 
-    // ── EMAIL ALERTS ──
     sectionHeader('Email Alert Test','📧');
     infoBadgeRow('Test Email Sent',r.emailAlertSent,['Yes','Sent'],false);
     infoBadgeRow('Test Result',r.emailAlertResult,['Success','OK','Received'],true);
     infoRow('Recipients',r.alertRecipients,false);
     y+=3; checkPage(30);
 
-    // ── LOG REVIEW ──
     sectionHeader('Log Review','📋');
     infoBadgeRow('Log Status',r.systemLogStatus,['Reviewed','Clean','OK'],false);
     infoRow('Errors (30d)',r.errorCount||'0',true);
@@ -1292,7 +1253,6 @@ async function generatePDF(){
     if(r.logNotes) infoRow('Notes',r.logNotes.substring(0,80),false);
     y+=3; checkPage(40);
 
-    // ── SHARE FOLDERS ──
     if(r.shareFolders.length>0){
       checkPage(20); sectionHeader('Share Folder Details','📁');
       doc.autoTable({
@@ -1304,7 +1264,6 @@ async function generatePDF(){
       y=doc.lastAutoTable.finalY+4;
     }
 
-    // ── USER ACCESS ──
     if(r.userAccess.length>0){
       checkPage(20); sectionHeader('User & Group Access','👥');
       doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(...muted);
@@ -1318,7 +1277,6 @@ async function generatePDF(){
       y=doc.lastAutoTable.finalY+4;
     }
 
-    // ── NETWORK ──
     checkPage(40); sectionHeader('Network Details','🌐');
     infoRow('IP Address',r.ipAddress,false); infoRow('Subnet Mask',r.subnetMask,true);
     infoRow('Default Gateway',r.gateway,false); infoRow('DNS Server',r.dns,true);
@@ -1326,7 +1284,6 @@ async function generatePDF(){
     infoBadgeRow('Network Status',r.networkStatus,['Connected','OK','Up','Online'],false);
     y+=3;
 
-    // ── ACTION ITEMS ──
     if(r.actionItems){
       checkPage(25);
       const aiLines=doc.splitTextToSize(r.actionItems,cW-8);
@@ -1339,7 +1296,6 @@ async function generatePDF(){
       doc.text(aiLines,pL+4,y+11); y+=aiH+4;
     }
 
-    // ── SIGNATURES ──
     checkPage(50); sectionHeader('Authorization & Sign-off','✍️');
     const sigY=y, sigW=cW/2-2;
     doc.setFillColor(250,251,255); doc.roundedRect(pL,sigY,sigW,40,2,2,'F');
@@ -1385,7 +1341,6 @@ async function generatePDF(){
     doc.text('By signing above, both parties confirm that the maintenance activities have been completed and reviewed to satisfaction.',W/2,y+4.5,{align:'center'});
     y+=9;
 
-    // ── FOOTER ALL PAGES ──
     const pageCount=doc.getNumberOfPages();
     for(let p=1;p<=pageCount;p++){
       doc.setPage(p);
@@ -1395,11 +1350,10 @@ async function generatePDF(){
       doc.text(`Netgear ReadyNAS Monthly Maintenance  |  ${r.companyName||''}  |  Page ${p} of ${pageCount}`,W-pR,293,{align:'right'});
     }
 
-    // ── DOWNLOAD PDF LOCALLY ──
     const fileName=`NAS_Report_${(r.companyName||'Customer').replace(/\s+/g,'_')}_${(r.monthYear||'').replace(/\s+/g,'_')}_${r.reportId}.pdf`;
     doc.save(fileName);
 
-    // ── SUBMIT TO GOOGLE DRIVE ──
+    // Always submit to the hardcoded backend
     await submitToGAS(r);
 
     overlay.classList.remove('show');
