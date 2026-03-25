@@ -767,11 +767,12 @@ async function generatePDF(){
 const img = new Image();
 img.src = "https://drive.google.com/file/d/1v_0ZAMO_2MhGpP70IVuCM8QBg3oY0Uj9/view";
 
+img.onload = function () {
+  doc.addImage(img, 'PNG', pL, 10, 60, 20);
 
-  doc.addImage(img, 'PNG', pL, 10, 60, 20);doc.setFontSize(16);;
-
-
-
+  // Continue your PDF content AFTER image loads
+  generateRestOfPDF();
+};
 
     
     doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.text('Comprehensive System Health & Status Analysis',pL,23);
