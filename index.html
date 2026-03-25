@@ -760,7 +760,20 @@ async function generatePDF(){
     doc.setFillColor(57,73,171); doc.rect(0,26,W,6,'F');
     doc.setTextColor(255,255,255);
     doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.text('NETGEAR READYNAS',pL,9);
-    doc.setFont('orange','bold'); doc.setFontSize(16); doc.text('WTIPL Monthly Maintenance Report',pL,17);
+    // doc.setFont('orange','bold'); doc.setFontSize(16); doc.text('WTIPL Monthly Maintenance Report',pL,17);         
+
+
+
+const img = new Image();
+img.src = "https://drive.google.com/file/d/1v_0ZAMO_2MhGpP70IVuCM8QBg3oY0Uj9/view";
+
+
+  doc.addImage(img, 'PNG', pL, 10, 60, 20);doc.setFontSize(16);;
+
+
+
+
+    
     doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.text('Comprehensive System Health & Status Analysis',pL,23);
     doc.text(r.monthYear||'',W-pR,9,{align:'right'});
     doc.text('Report ID: '+r.reportId,W-pR,14,{align:'right'});
