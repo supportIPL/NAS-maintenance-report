@@ -776,7 +776,7 @@ async function generatePDF(){
     function sectionHeader(title, icon=''){
       doc.setFillColor(...navy); doc.rect(0,y,W,7,'F');
       doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(255,255,255);
-      doc.text(icon+' '+title,pL,y+5); y+=8;
+      doc.text(title,pL,y+5); y+=8;
     }
     function infoRow(label, value, even=false){
       if(even){ doc.setFillColor(245,245,250); doc.rect(0,y,W,5.5,'F'); }
