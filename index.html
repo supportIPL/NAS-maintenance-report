@@ -930,7 +930,7 @@ async function generatePDF(){
     y=sigY+43;
 
     doc.setFillColor(232,234,246); doc.rect(0,y,W,7,'F');
-    doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(...indigo);
+    doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(0,0,0);
     doc.text('By signing above, both parties confirm that the maintenance activities have been completed and reviewed to satisfaction.',W/2,y+4.5,{align:'center'});
     y+=9;
 
@@ -938,7 +938,7 @@ async function generatePDF(){
     for(let p=1;p<=pageCount;p++){
       doc.setPage(p);
       doc.setFillColor(...navy); doc.rect(0,287,W,10,'F');
-      doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(255,255,255);
+      doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(0,0,0);
       doc.text(`Report ID: ${r.reportId}  |  Generated: ${new Date().toLocaleString()}  |  Confidential`,pL,293);
       doc.text(`Netgear ReadyNAS Monthly Maintenance  |  ${r.companyName||''}  |  Page ${p} of ${pageCount}`,W-pR,293,{align:'right'});
     }
