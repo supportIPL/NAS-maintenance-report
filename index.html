@@ -789,12 +789,12 @@ async function generatePDF(){
     function statusBadge(val, okVals, x, yPos, w=40){
       const sc=statusColor(val,okVals);
       doc.setFillColor(...sc.bg); doc.roundedRect(x,yPos-3,w,4.5,1,1,'F');
-      doc.setFont('helvetica','bold'); doc.setFontSize(7); doc.setTextColor(0,0,0);
+      doc.setFont('helvetica','bold'); doc.setFontSize(7); doc.setTextColor(...sc.fg);
       doc.text(String(val||'N/A'),x+w/2,yPos,{align:'center'});
     }
     function infoBadgeRow(label, value, okVals, even=false){
       if(even){ doc.setFillColor(245,245,250); doc.rect(0,y,W,5.5,'F'); }
-      doc.setFont('helvetica','bold'); doc.setFontSize(7.5); doc.setTextColor(...muted); doc.text(label.toUpperCase(),pL,y+3.8);
+      doc.setFont('helvetica','bold'); doc.setFontSize(7.5); doc.setTextColor(0,0,0); doc.text(label.toUpperCase(),pL,y+3.8);
       statusBadge(value,okVals,pL+65,y+3.8,40);
       doc.setDrawColor(224,224,224); doc.setLineWidth(0.1); doc.line(0,y+5.5,W,y+5.5); y+=5.5;
     }
