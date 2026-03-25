@@ -773,17 +773,17 @@ async function generatePDF(){
     doc.setDrawColor(57,73,171); doc.setLineWidth(1); doc.line(0,y,0,y+18); doc.setLineWidth(0.1);
     const cFields=[['Company',r.companyName],['Contact',r.contactName||'—'],['NAS Model',r.nasModel||'—'],['Location',r.location||'—'],['Contract #',r.contractNo||'—'],['Next Maintenance',r.nextMaintenance||'—']];
     const cw2=cW/6;
-    cFields.forEach((cf,i)=>{ const cx=pL+i*cw2; doc.setFont('helvetica','bold'); doc.setFontSize(7); doc.setTextColor(...indigo); doc.text(cf[0].toUpperCase(),cx,y+5); doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(...navy); doc.text(String(cf[1]||'—').substring(0,14),cx,y+13); });
+    cFields.forEach((cf,i)=>{ const cx=pL+i*cw2; doc.setFont('helvetica','bold'); doc.setFontSize(7); doc.setTextColor(0,0,0); doc.text(cf[0].toUpperCase(),cx,y+5); doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(...navy); doc.text(String(cf[1]||'—').substring(0,14),cx,y+13); });
     y+=20;
     function sectionHeader(title, icon=''){
       doc.setFillColor(...navy); doc.rect(0,y,W,7,'F');
-      doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(255,255,255);
+      doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(0,0,0);
       doc.text(title,pL,y+5); y+=8;
     }
     function infoRow(label, value, even=false){
       if(even){ doc.setFillColor(245,245,250); doc.rect(0,y,W,5.5,'F'); }
       doc.setFont('helvetica','bold'); doc.setFontSize(7.5); doc.setTextColor(...muted); doc.text(label.toUpperCase(),pL,y+3.8);
-      doc.setFont('helvetica','normal'); doc.setTextColor(...textColor); doc.text(String(value||'—').substring(0,60),pL+65,y+3.8);
+      doc.setFont('helvetica','normal'); doc.setTextColor(0,0,0); doc.text(String(value||'—').substring(0,60),pL+65,y+3.8);
       doc.setDrawColor(224,224,224); doc.setLineWidth(0.1); doc.line(0,y+5.5,W,y+5.5); y+=5.5;
     }
     function statusBadge(val, okVals, x, yPos, w=40){
