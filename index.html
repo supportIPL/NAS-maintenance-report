@@ -8,432 +8,101 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <style>
-:root {
-  --navy: #1a237e;
-  --navy-mid: #283593;
-  --indigo: #3949ab;
-  --indigo-light: #5c6bc0;
-  --accent: #00b0ff;
-  --green: #2e7d32;
-  --green-bg: #e8f5e9;
-  --red: #c62828;
-  --red-bg: #ffebee;
-  --amber: #e65100;
-  --amber-bg: #fff8e1;
-  --bg: #f0f2f8;
-  --card: #ffffff;
-  --border: #e0e4f0;
-  --text: #1a1f36;
-  --muted: #6b7280;
-  --radius: 10px;
-  --shadow: 0 2px 12px rgba(26,35,126,0.08);
-}
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-body {
-  font-family: 'DM Sans', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  background-image: radial-gradient(ellipse at 20% 0%, rgba(57,73,171,0.07) 0%, transparent 60%),
-                    radial-gradient(ellipse at 80% 100%, rgba(0,176,255,0.05) 0%, transparent 60%);
-}
-.topbar {
-  background: linear-gradient(135deg, var(--navy) 0%, var(--indigo) 100%);
-  color: white;
-  padding: 16px 32px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  box-shadow: 0 2px 20px rgba(26,35,126,0.3);
-}
-.topbar-brand { display: flex; align-items: center; gap: 12px; }
-.topbar-icon {
-  width: 38px; height: 38px;
-  background: rgba(255,255,255,0.15);
-  border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 18px;
-}
-.topbar-title { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 17px; }
-.topbar-sub { font-size: 11px; opacity: 0.7; margin-top: 1px; }
-.topbar-badge {
-  background: rgba(255,255,255,0.15);
-  border: 1px solid rgba(255,255,255,0.2);
-  padding: 5px 14px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-}
-.app { display: flex; min-height: calc(100vh - 70px); }
-.sidebar {
-  width: 200px;
-  flex-shrink: 0;
-  background: var(--card);
-  border-right: 1px solid var(--border);
-  padding: 24px 0;
-  position: sticky;
-  top: 70px;
-  height: calc(100vh - 70px);
-  overflow-y: auto;
-}
-.sidebar-label {
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  padding: 0 20px 12px;
-}
-.step-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 9px 20px;
-  cursor: pointer;
-  transition: all 0.2s;
-  border-left: 3px solid transparent;
-  position: relative;
-}
-.step-item:hover { background: rgba(57,73,171,0.05); }
-.step-item.active {
-  background: rgba(57,73,171,0.08);
-  border-left-color: var(--indigo);
-}
-.step-item.done { opacity: 0.7; }
-.step-num {
-  width: 24px; height: 24px;
-  border-radius: 50%;
-  background: #e8eaf6;
-  color: var(--indigo);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 10px;
-  font-weight: 700;
-  flex-shrink: 0;
-  transition: all 0.2s;
-}
-.step-item.active .step-num { background: var(--navy); color: white; }
-.step-item.done .step-num { background: var(--green); color: white; }
-.step-text { font-size: 12px; font-weight: 500; color: var(--text); }
-.step-item.active .step-text { color: var(--navy); font-weight: 700; }
-.content { flex: 1; padding: 28px 32px; max-width: 900px; }
-.progress-track {
-  height: 4px;
-  background: var(--border);
-  border-radius: 2px;
-  margin-bottom: 24px;
-  overflow: hidden;
-}
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--navy), var(--accent));
-  border-radius: 2px;
-  transition: width 0.4s ease;
-}
-.section-card { display: none; animation: fadeSlide 0.3s ease; }
-.section-card.active { display: block; }
-@keyframes fadeSlide {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.section-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-.section-icon {
-  width: 40px; height: 40px;
-  background: linear-gradient(135deg, var(--navy), var(--indigo));
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 18px;
-  flex-shrink: 0;
-}
-.section-title { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; color: var(--navy); }
-.section-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
-.card {
-  background: var(--card);
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
-  padding: 20px;
-  margin-bottom: 16px;
-  box-shadow: var(--shadow);
-}
-.card-title {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  color: var(--indigo);
-  margin-bottom: 14px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--border);
-}
-.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-.full { grid-column: 1 / -1; }
-.field { display: flex; flex-direction: column; gap: 5px; }
-.field label {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-}
-.field input, .field select, .field textarea {
-  border: 1.5px solid var(--border);
-  border-radius: 7px;
-  padding: 9px 12px;
-  font-size: 13px;
-  font-family: 'DM Sans', sans-serif;
-  color: var(--text);
-  background: white;
-  transition: all 0.2s;
-  outline: none;
-}
-.field input:focus, .field select:focus, .field textarea:focus {
-  border-color: var(--indigo);
-  box-shadow: 0 0 0 3px rgba(57,73,171,0.1);
-}
-.field textarea { resize: vertical; min-height: 70px; }
-.field input[readonly] { background: #f8f9fc; color: var(--muted); }
-.dyn-wrap {
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-.dyn-head {
-  background: #f0f2f8;
-  padding: 10px 16px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid var(--border);
-}
-.dyn-head span { font-size: 12px; font-weight: 700; color: var(--navy); }
-.btn-add-row {
-  background: var(--indigo);
-  color: white;
-  border: none;
-  padding: 5px 12px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.btn-add-row:hover { background: var(--navy); }
-table.dyn {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 12px;
-}
-table.dyn th {
-  background: var(--navy);
-  color: white;
-  padding: 8px 10px;
-  text-align: left;
-  font-weight: 600;
-  font-size: 11px;
-}
-table.dyn td {
-  padding: 5px 8px;
-  border-bottom: 1px solid var(--border);
-}
-table.dyn tr:nth-child(even) td { background: #fafbff; }
-table.dyn td input {
-  width: 100%;
-  border: 1.5px solid transparent;
-  border-radius: 4px;
-  padding: 5px 7px;
-  font-size: 11px;
-  font-family: 'DM Sans', sans-serif;
-  background: transparent;
-  outline: none;
-  color: var(--text);
-}
-table.dyn td input:focus {
-  border-color: var(--indigo);
-  background: white;
-}
-.btn-del {
-  background: var(--red);
-  color: white;
-  border: none;
-  padding: 3px 8px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 11px;
-}
-.sig-wrap {
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-.sig-topbar {
-  background: #f0f2f8;
-  padding: 10px 16px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid var(--border);
-}
-.sig-topbar-left { font-size: 12px; font-weight: 700; color: var(--navy); }
-.sig-controls { display: flex; gap: 6px; }
-.sig-btn {
-  padding: 4px 10px;
-  border-radius: 5px;
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-  border: 1.5px solid var(--border);
-  background: white;
-  color: var(--indigo);
-  transition: all 0.2s;
-}
-.sig-btn.active { background: var(--navy); color: white; border-color: var(--navy); }
-.sig-btn.clear { background: #ffebee; color: var(--red); border-color: #ffcdd2; }
-.sig-canvas-area { background: #fff; }
-canvas.sig-canvas {
-  display: block;
-  cursor: crosshair;
-  touch-action: none;
-  width: 100%;
-  height: 110px;
-}
-.sig-type-area { display: none; padding: 12px 16px; }
-.sig-type-area input {
-  width: 100%;
-  border: 1.5px solid var(--border);
-  border-radius: 6px;
-  padding: 10px 14px;
-  font-size: 26px;
-  font-family: 'Brush Script MT', cursive;
-  color: var(--navy);
-  outline: none;
-}
-.sig-type-area input:focus { border-color: var(--indigo); }
-.sig-meta {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  padding: 12px 16px;
-  background: #fafbff;
-  border-top: 1px solid var(--border);
-}
-.sig-preview {
-  border: 1.5px dashed var(--border);
-  border-radius: 6px;
-  min-height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 10px;
-  color: #bbb;
-  overflow: hidden;
-  margin-top: 4px;
-}
-.sig-preview img { max-height: 34px; }
-.nav-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 24px;
-  padding: 16px 20px;
-  background: var(--card);
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow);
-}
-.btn-nav {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 10px 22px;
-  border-radius: 8px;
-  border: none;
-  font-size: 13px;
-  font-weight: 600;
-  font-family: 'DM Sans', sans-serif;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.btn-prev { background: #f0f2f8; color: var(--muted); }
-.btn-prev:hover { background: var(--border); }
-.btn-next { background: var(--navy); color: white; }
-.btn-next:hover { background: var(--indigo); }
-.btn-submit {
-  background: linear-gradient(135deg, var(--green), #43a047);
-  color: white;
-  box-shadow: 0 4px 14px rgba(46,125,50,0.3);
-}
-.btn-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(46,125,50,0.4); }
-.btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-.nav-info { font-size: 12px; color: var(--muted); }
-.divider { height: 1px; background: var(--border); margin: 16px 0; }
-.sub-section-title {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  color: var(--indigo);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin: 14px 0 10px;
-}
-.toast {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  padding: 14px 20px;
-  border-radius: 10px;
-  font-size: 13px;
-  font-weight: 600;
-  color: white;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-  z-index: 9999;
-  display: none;
-  animation: toastIn 0.3s ease;
-}
-.toast.ok { background: var(--green); }
-.toast.err { background: var(--red); }
-@keyframes toastIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-.overlay {
-  position: fixed; inset: 0;
-  background: rgba(255,255,255,0.85);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  z-index: 9000;
-  gap: 16px;
-}
-.overlay.show { display: flex; }
-.spinner {
-  width: 48px; height: 48px;
-  border: 4px solid #e8eaf6;
-  border-top-color: var(--navy);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-.overlay-text { font-size: 14px; color: var(--navy); font-weight: 600; }
-@media (max-width: 700px) {
-  .sidebar { display: none; }
-  .form-grid { grid-template-columns: 1fr; }
-  .form-grid-3 { grid-template-columns: 1fr 1fr; }
-  .content { padding: 16px; }
-}
+:root{--navy:#1a237e;--navy-mid:#283593;--indigo:#3949ab;--indigo-light:#5c6bc0;--accent:#00b0ff;--green:#2e7d32;--green-bg:#e8f5e9;--red:#c62828;--red-bg:#ffebee;--amber:#e65100;--amber-bg:#fff8e1;--bg:#f0f2f8;--card:#ffffff;--border:#e0e4f0;--text:#1a1f36;--muted:#6b7280;--radius:10px;--shadow:0 2px 12px rgba(26,35,126,0.08)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;background-image:radial-gradient(ellipse at 20% 0%,rgba(57,73,171,0.07) 0%,transparent 60%),radial-gradient(ellipse at 80% 100%,rgba(0,176,255,0.05) 0%,transparent 60%)}
+.topbar{background:linear-gradient(135deg,var(--navy) 0%,var(--indigo) 100%);color:white;padding:16px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(26,35,126,0.3)}
+.topbar-brand{display:flex;align-items:center;gap:12px}
+.topbar-icon{width:38px;height:38px;background:rgba(255,255,255,0.15);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.topbar-title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:17px}
+.topbar-sub{font-size:11px;opacity:0.7;margin-top:1px}
+.topbar-badge{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.2);padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600}
+.app{display:flex;min-height:calc(100vh - 70px)}
+.sidebar{width:200px;flex-shrink:0;background:var(--card);border-right:1px solid var(--border);padding:24px 0;position:sticky;top:70px;height:calc(100vh - 70px);overflow-y:auto}
+.sidebar-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;padding:0 20px 12px}
+.step-item{display:flex;align-items:center;gap:10px;padding:9px 20px;cursor:pointer;transition:all 0.2s;border-left:3px solid transparent}
+.step-item:hover{background:rgba(57,73,171,0.05)}
+.step-item.active{background:rgba(57,73,171,0.08);border-left-color:var(--indigo)}
+.step-item.done{opacity:0.7}
+.step-num{width:24px;height:24px;border-radius:50%;background:#e8eaf6;color:var(--indigo);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;transition:all 0.2s}
+.step-item.active .step-num{background:var(--navy);color:white}
+.step-item.done .step-num{background:var(--green);color:white}
+.step-text{font-size:12px;font-weight:500;color:var(--text)}
+.step-item.active .step-text{color:var(--navy);font-weight:700}
+.content{flex:1;padding:28px 32px;max-width:900px}
+.progress-track{height:4px;background:var(--border);border-radius:2px;margin-bottom:24px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--navy),var(--accent));border-radius:2px;transition:width 0.4s ease}
+.section-card{display:none;animation:fadeSlide 0.3s ease}
+.section-card.active{display:block}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.section-header{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.section-icon{width:40px;height:40px;background:linear-gradient(135deg,var(--navy),var(--indigo));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.section-title{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:var(--navy)}
+.section-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:20px;margin-bottom:16px;box-shadow:var(--shadow)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.full{grid-column:1/-1}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px}
+.field input,.field select,.field textarea{border:1.5px solid var(--border);border-radius:7px;padding:9px 12px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:white;transition:all 0.2s;outline:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--indigo);box-shadow:0 0 0 3px rgba(57,73,171,0.1)}
+.field textarea{resize:vertical;min-height:70px}
+.field input[readonly]{background:#f8f9fc;color:var(--muted)}
+.dyn-wrap{border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.dyn-head{background:#f0f2f8;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
+.dyn-head span{font-size:12px;font-weight:700;color:var(--navy)}
+.btn-add-row{background:var(--indigo);color:white;border:none;padding:5px 12px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;transition:background 0.2s}
+.btn-add-row:hover{background:var(--navy)}
+table.dyn{width:100%;border-collapse:collapse;font-size:12px}
+table.dyn th{background:var(--navy);color:white;padding:8px 10px;text-align:left;font-weight:600;font-size:11px}
+table.dyn td{padding:5px 8px;border-bottom:1px solid var(--border)}
+table.dyn tr:nth-child(even) td{background:#fafbff}
+table.dyn td input{width:100%;border:1.5px solid transparent;border-radius:4px;padding:5px 7px;font-size:11px;font-family:'DM Sans',sans-serif;background:transparent;outline:none;color:var(--text)}
+table.dyn td input:focus{border-color:var(--indigo);background:white}
+.btn-del{background:var(--red);color:white;border:none;padding:3px 8px;border-radius:4px;cursor:pointer;font-size:11px}
+.sig-wrap{border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.sig-topbar{background:#f0f2f8;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
+.sig-topbar-left{font-size:12px;font-weight:700;color:var(--navy)}
+.sig-controls{display:flex;gap:6px}
+.sig-btn{padding:4px 10px;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:white;color:var(--indigo);transition:all 0.2s}
+.sig-btn.active{background:var(--navy);color:white;border-color:var(--navy)}
+.sig-btn.clear{background:#ffebee;color:var(--red);border-color:#ffcdd2}
+.sig-canvas-area{background:#fff}
+canvas.sig-canvas{display:block;cursor:crosshair;touch-action:none;width:100%;height:110px}
+.sig-type-area{display:none;padding:12px 16px}
+.sig-type-area input{width:100%;border:1.5px solid var(--border);border-radius:6px;padding:10px 14px;font-size:26px;font-family:'Brush Script MT',cursive;color:var(--navy);outline:none}
+.sig-type-area input:focus{border-color:var(--indigo)}
+.sig-meta{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px 16px;background:#fafbff;border-top:1px solid var(--border)}
+.sig-preview{border:1.5px dashed var(--border);border-radius:6px;min-height:36px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#bbb;overflow:hidden;margin-top:4px}
+.sig-preview img{max-height:34px}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;margin-top:24px;padding:16px 20px;background:var(--card);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow)}
+.btn-nav{display:flex;align-items:center;gap:6px;padding:10px 22px;border-radius:8px;border:none;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s}
+.btn-prev{background:#f0f2f8;color:var(--muted)}
+.btn-prev:hover{background:var(--border)}
+.btn-next{background:var(--navy);color:white}
+.btn-next:hover{background:var(--indigo)}
+.btn-submit{background:linear-gradient(135deg,var(--green),#43a047);color:white;box-shadow:0 4px 14px rgba(46,125,50,0.3)}
+.btn-submit:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(46,125,50,0.4)}
+.btn-submit:disabled{opacity:0.6;cursor:not-allowed;transform:none}
+.nav-info{font-size:12px;color:var(--muted)}
+.divider{height:1px;background:var(--border);margin:16px 0}
+.sub-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--indigo);display:flex;align-items:center;gap:6px;margin:14px 0 10px}
+.toast{position:fixed;bottom:24px;right:24px;padding:14px 20px;border-radius:10px;font-size:13px;font-weight:600;color:white;box-shadow:0 8px 24px rgba(0,0,0,0.2);z-index:9999;display:none;animation:toastIn 0.3s ease}
+.toast.ok{background:var(--green)}
+.toast.err{background:var(--red)}
+@keyframes toastIn{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.overlay{position:fixed;inset:0;background:rgba(255,255,255,0.85);display:none;align-items:center;justify-content:center;flex-direction:column;z-index:9000;gap:16px}
+.overlay.show{display:flex}
+.spinner{width:48px;height:48px;border:4px solid #e8eaf6;border-top-color:var(--navy);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.overlay-text{font-size:14px;color:var(--navy);font-weight:600}
+@media(max-width:700px){.sidebar{display:none}.form-grid{grid-template-columns:1fr}.form-grid-3{grid-template-columns:1fr 1fr}.content{padding:16px}}
 </style>
 </head>
 <body>
 
-<!-- TOP BAR -->
 <div class="topbar">
   <div class="topbar-brand">
     <div class="topbar-icon">🖥️</div>
@@ -445,28 +114,18 @@ canvas.sig-canvas {
   <div class="topbar-badge" id="topStepBadge">Step 1 of 12</div>
 </div>
 
-<!-- APP -->
 <div class="app">
-
-  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sidebar-label">Sections</div>
     <div id="stepList"></div>
   </aside>
 
-  <!-- CONTENT -->
   <main class="content">
     <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:8.33%"></div></div>
 
-    <!-- ── STEP 0: Customer ── -->
+    <!-- STEP 0: Customer -->
     <div class="section-card active" id="sec0">
-      <div class="section-header">
-        <div class="section-icon">🏢</div>
-        <div>
-          <div class="section-title">Customer & Report Info</div>
-          <div class="section-sub">Basic report identification details</div>
-        </div>
-      </div>
+      <div class="section-header"><div class="section-icon">🏢</div><div><div class="section-title">Customer & Report Info</div><div class="section-sub">Basic report identification details</div></div></div>
       <div class="card">
         <div class="form-grid">
           <div class="field"><label>Company Name *</label><input type="text" id="companyName" placeholder="e.g. Acme Corporation" required></div>
@@ -481,31 +140,21 @@ canvas.sig-canvas {
       </div>
     </div>
 
-    <!-- ── STEP 1: Firmware ── -->
+    <!-- STEP 1: Firmware -->
     <div class="section-card" id="sec1">
-      <div class="section-header">
-        <div class="section-icon">🔧</div>
-        <div><div class="section-title">Firmware</div><div class="section-sub">Current and available firmware versions</div></div>
-      </div>
+      <div class="section-header"><div class="section-icon">🔧</div><div><div class="section-title">Firmware</div><div class="section-sub">Current and available firmware versions</div></div></div>
       <div class="card">
         <div class="form-grid">
           <div class="field"><label>Current Firmware Version</label><input type="text" id="currentFirmware" placeholder="e.g. 6.10.6"></div>
           <div class="field"><label>Available Firmware Version</label><input type="text" id="availableFirmware" placeholder="e.g. 6.10.7 or Same"></div>
-          <div class="field"><label>Firmware Status</label>
-            <select id="firmwareStatus">
-              <option>Up-to-date</option><option>Update Available</option><option>Update Applied</option><option>Failed</option>
-            </select>
-          </div>
+          <div class="field"><label>Firmware Status</label><select id="firmwareStatus"><option>Up-to-date</option><option>Update Available</option><option>Update Applied</option><option>Failed</option></select></div>
         </div>
       </div>
     </div>
 
-    <!-- ── STEP 2: Volume/Disk ── -->
+    <!-- STEP 2: Volume/Disk -->
     <div class="section-card" id="sec2">
-      <div class="section-header">
-        <div class="section-icon">💾</div>
-        <div><div class="section-title">Volume & Disk Configuration</div><div class="section-sub">Storage layout, capacity, and disk info</div></div>
-      </div>
+      <div class="section-header"><div class="section-icon">💾</div><div><div class="section-title">Volume & Disk Configuration</div><div class="section-sub">Storage layout, capacity, and disk info</div></div></div>
       <div class="card">
         <div class="form-grid-3">
           <div class="field"><label>Volume Name</label><input type="text" id="volumeName" placeholder="e.g. Vol1"></div>
@@ -522,12 +171,9 @@ canvas.sig-canvas {
       </div>
     </div>
 
-    <!-- ── STEP 3: Health ── -->
+    <!-- STEP 3: Health -->
     <div class="section-card" id="sec3">
-      <div class="section-header">
-        <div class="section-icon">❤️</div>
-        <div><div class="section-title">Health Status</div><div class="section-sub">Disk, SMART, fan and system health</div></div>
-      </div>
+      <div class="section-header"><div class="section-icon">❤️</div><div><div class="section-title">Health Status</div><div class="section-sub">Disk, SMART, fan and system health</div></div></div>
       <div class="card">
         <div class="form-grid">
           <div class="field"><label>Disk Health</label><select id="diskHealth"><option>Good</option><option>Warning</option><option>Critical</option><option>Failed</option></select></div>
@@ -539,12 +185,9 @@ canvas.sig-canvas {
       </div>
     </div>
 
-    <!-- ── STEP 4: Performance ── -->
+    <!-- STEP 4: Performance -->
     <div class="section-card" id="sec4">
-      <div class="section-header">
-        <div class="section-icon">⚡</div>
-        <div><div class="section-title">Performance Metrics</div><div class="section-sub">Read/write speeds, CPU, RAM and uptime</div></div>
-      </div>
+      <div class="section-header"><div class="section-icon">⚡</div><div><div class="section-title">Performance Metrics</div><div class="section-sub">Read/write speeds, CPU, RAM and uptime</div></div></div>
       <div class="card">
         <div class="form-grid-3">
           <div class="field"><label>Avg Read Speed (MB/s)</label><input type="number" id="avgReadSpeed" placeholder="e.g. 110"></div>
@@ -556,12 +199,9 @@ canvas.sig-canvas {
       </div>
     </div>
 
-    <!-- ── STEP 5: Backup ── -->
+    <!-- STEP 5: Backup -->
     <div class="section-card" id="sec5">
-      <div class="section-header">
-        <div class="section-icon">🗄️</div>
-        <div><div class="section-title">Backup Details</div><div class="section-sub">Local USB and cloud backup status</div></div>
-      </div>
+      <div class="section-header"><div class="section-icon">🗄️</div><div><div class="section-title">Backup Details</div><div class="section-sub">Local USB and cloud backup status</div></div></div>
       <div class="card">
         <div class="sub-section-title">📦 Local / USB Backup</div>
         <div class="form-grid">
@@ -585,12 +225,9 @@ canvas.sig-canvas {
       </div>
     </div>
 
-    <!-- ── STEP 6: Cloud/Email ── -->
+    <!-- STEP 6: Cloud/Email -->
     <div class="section-card" id="sec6">
-      <div class="section-header">
-        <div class="section-icon">🏢</div>
-        <div><div class="section-title">Microsoft 365 & Email Alerts</div><div class="section-sub">M365 backup and alert test results</div></div>
-      </div>
+      <div class="section-header"><div class="section-icon">🏢</div><div><div class="section-title">Microsoft 365 & Email Alerts</div><div class="section-sub">M365 backup and alert test results</div></div></div>
       <div class="card">
         <div class="sub-section-title">Microsoft 365 Backup</div>
         <div class="form-grid">
@@ -610,12 +247,9 @@ canvas.sig-canvas {
       </div>
     </div>
 
-    <!-- ── STEP 7: Logs ── -->
+    <!-- STEP 7: Logs -->
     <div class="section-card" id="sec7">
-      <div class="section-header">
-        <div class="section-icon">📋</div>
-        <div><div class="section-title">Log Review</div><div class="section-sub">System logs, errors and warnings</div></div>
-      </div>
+      <div class="section-header"><div class="section-icon">📋</div><div><div class="section-title">Log Review</div><div class="section-sub">System logs, errors and warnings</div></div></div>
       <div class="card">
         <div class="form-grid">
           <div class="field"><label>System Log Status</label><select id="systemLogStatus"><option>Reviewed - Clean</option><option>Reviewed - Warnings Found</option><option>Reviewed - Errors Found</option><option>Not Reviewed</option></select></div>
@@ -627,38 +261,25 @@ canvas.sig-canvas {
       </div>
     </div>
 
-    <!-- ── STEP 8: Share Folders ── -->
+    <!-- STEP 8: Share Folders -->
     <div class="section-card" id="sec8">
-      <div class="section-header">
-        <div class="section-icon">📁</div>
-        <div><div class="section-title">Share Folder Details</div><div class="section-sub">Department-wise folder list</div></div>
-      </div>
+      <div class="section-header"><div class="section-icon">📁</div><div><div class="section-title">Share Folder Details</div><div class="section-sub">Department-wise folder list</div></div></div>
       <div class="card" style="padding:0;">
         <div class="dyn-wrap">
           <div class="dyn-head"><span>Department Folders</span><button class="btn-add-row" onclick="addShareRow()">+ Add Folder</button></div>
           <table class="dyn">
             <thead><tr><th>Folder Name</th><th>Department</th><th>Size (GB)</th><th>File Count</th><th>Permissions</th><th width="36"></th></tr></thead>
             <tbody id="shareTbody">
-              <tr>
-                <td><input type="text" placeholder="Finance"></td>
-                <td><input type="text" placeholder="Finance Dept"></td>
-                <td><input type="number" placeholder="GB"></td>
-                <td><input type="text" placeholder="1,200"></td>
-                <td><input type="text" placeholder="Read/Write"></td>
-                <td><button class="btn-del" onclick="delRow(this)">✕</button></td>
-              </tr>
+              <tr><td><input type="text" placeholder="Finance"></td><td><input type="text" placeholder="Finance Dept"></td><td><input type="number" placeholder="GB"></td><td><input type="text" placeholder="1,200"></td><td><input type="text" placeholder="Read/Write"></td><td><button class="btn-del" onclick="delRow(this)">✕</button></td></tr>
             </tbody>
           </table>
         </div>
       </div>
     </div>
 
-    <!-- ── STEP 9: Users ── -->
+    <!-- STEP 9: Users -->
     <div class="section-card" id="sec9">
-      <div class="section-header">
-        <div class="section-icon">👥</div>
-        <div><div class="section-title">User & Group Access</div><div class="section-sub">User counts and group access details</div></div>
-      </div>
+      <div class="section-header"><div class="section-icon">👥</div><div><div class="section-title">User & Group Access</div><div class="section-sub">User counts and group access details</div></div></div>
       <div class="card">
         <div class="form-grid" style="margin-bottom:14px;">
           <div class="field"><label>Total User Count</label><input type="number" id="userCount" min="0" placeholder="e.g. 25"></div>
@@ -669,25 +290,16 @@ canvas.sig-canvas {
           <table class="dyn">
             <thead><tr><th>Group Name</th><th>Users</th><th>Access Level</th><th>Shared Folders</th><th width="36"></th></tr></thead>
             <tbody id="userTbody">
-              <tr>
-                <td><input type="text" placeholder="Finance_Group"></td>
-                <td><input type="text" placeholder="5 users"></td>
-                <td><input type="text" placeholder="Read/Write"></td>
-                <td><input type="text" placeholder="Finance, HR"></td>
-                <td><button class="btn-del" onclick="delRow(this)">✕</button></td>
-              </tr>
+              <tr><td><input type="text" placeholder="Finance_Group"></td><td><input type="text" placeholder="5 users"></td><td><input type="text" placeholder="Read/Write"></td><td><input type="text" placeholder="Finance, HR"></td><td><button class="btn-del" onclick="delRow(this)">✕</button></td></tr>
             </tbody>
           </table>
         </div>
       </div>
     </div>
 
-    <!-- ── STEP 10: Network ── -->
+    <!-- STEP 10: Network -->
     <div class="section-card" id="sec10">
-      <div class="section-header">
-        <div class="section-icon">🌐</div>
-        <div><div class="section-title">Network Details</div><div class="section-sub">IP configuration and connectivity</div></div>
-      </div>
+      <div class="section-header"><div class="section-icon">🌐</div><div><div class="section-title">Network Details</div><div class="section-sub">IP configuration and connectivity</div></div></div>
       <div class="card">
         <div class="form-grid-3">
           <div class="field"><label>IP Address</label><input type="text" id="ipAddress" placeholder="192.168.1.100"></div>
@@ -701,12 +313,9 @@ canvas.sig-canvas {
       </div>
     </div>
 
-    <!-- ── STEP 11: Finish ── -->
+    <!-- STEP 11: Finish -->
     <div class="section-card" id="sec11">
-      <div class="section-header">
-        <div class="section-icon">✍️</div>
-        <div><div class="section-title">Signatures & Submit</div><div class="section-sub">Action items, sign-off and generate PDF</div></div>
-      </div>
+      <div class="section-header"><div class="section-icon">✍️</div><div><div class="section-title">Signatures & Submit</div><div class="section-sub">Action items, sign-off and generate PDF</div></div></div>
       <div class="card">
         <div class="field" style="margin-bottom:16px;">
           <label>Action Items / Recommendations</label>
@@ -717,7 +326,6 @@ canvas.sig-canvas {
           <div class="field"><label>Technician Designation</label><input type="text" id="techDesignation" placeholder="e.g. Service Engineer"></div>
         </div>
 
-        <!-- SIGNATURES SIDE BY SIDE -->
         <div class="form-grid" style="gap:16px;">
           <!-- TECH SIG -->
           <div class="sig-wrap">
@@ -729,8 +337,12 @@ canvas.sig-canvas {
                 <button class="sig-btn clear" onclick="clearSig('tech')">Clear</button>
               </div>
             </div>
-            <div class="sig-canvas-area" id="tech-canvas-area"><canvas class="sig-canvas" id="techCanvas"></canvas></div>
-            <div class="sig-type-area" id="tech-type-area"><input type="text" id="techTyped" placeholder="Type name..." oninput="renderTyped('tech')"></div>
+            <div class="sig-canvas-area" id="tech-canvas-area">
+              <canvas class="sig-canvas" id="techCanvas"></canvas>
+            </div>
+            <div class="sig-type-area" id="tech-type-area">
+              <input type="text" id="techTyped" placeholder="Type name to generate signature..." oninput="renderTyped('tech')">
+            </div>
             <div class="sig-meta">
               <div class="field"><label>Signed Date</label><input type="date" id="techSignedDate"></div>
               <div>
@@ -750,8 +362,12 @@ canvas.sig-canvas {
                 <button class="sig-btn clear" onclick="clearSig('cust')">Clear</button>
               </div>
             </div>
-            <div class="sig-canvas-area" id="cust-canvas-area"><canvas class="sig-canvas" id="custCanvas"></canvas></div>
-            <div class="sig-type-area" id="cust-type-area"><input type="text" id="custTyped" placeholder="Type name..." oninput="renderTyped('cust')"></div>
+            <div class="sig-canvas-area" id="cust-canvas-area">
+              <canvas class="sig-canvas" id="custCanvas"></canvas>
+            </div>
+            <div class="sig-type-area" id="cust-type-area">
+              <input type="text" id="custTyped" placeholder="Type name to generate signature..." oninput="renderTyped('cust')">
+            </div>
             <div class="sig-meta">
               <div class="field"><label>Signatory Name</label><input type="text" id="custSignatoryName" placeholder="Customer rep name"></div>
               <div class="field"><label>Designation</label><input type="text" id="custDesignation" placeholder="e.g. IT Manager"></div>
@@ -764,7 +380,6 @@ canvas.sig-canvas {
           </div>
         </div>
 
-        <!-- ✅ BACKEND CONNECTED BADGE — GAS URL hardcoded, config box hidden -->
         <input type="hidden" id="gasUrl" value="https://script.google.com/macros/s/AKfycbx6rUYSmR2YALd9O5BnMLn8hD_JyxqEuJ_IxzxcIV25jrI-8mbtxp5Fa3gsEt2BqdZf/exec">
 
         <div style="background:#e8f5e9;border-radius:8px;padding:12px 16px;border-left:4px solid var(--green);margin-top:16px;display:flex;align-items:center;gap:10px;">
@@ -784,7 +399,6 @@ canvas.sig-canvas {
       </div>
     </div>
 
-    <!-- NAV -->
     <div class="nav-bar">
       <button class="btn-nav btn-prev" id="btnPrev" onclick="prevStep()" style="display:none;">← Previous</button>
       <span class="nav-info" id="navInfo">Step 1 of 12</span>
@@ -796,20 +410,15 @@ canvas.sig-canvas {
   </main>
 </div>
 
-<!-- SPINNER OVERLAY -->
 <div class="overlay" id="overlay">
   <div class="spinner"></div>
   <div class="overlay-text" id="overlayText">Generating PDF...</div>
 </div>
-
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ── HARDCODED BACKEND URL ──────────────────────────────────
 const GAS_BACKEND_URL = "https://script.google.com/macros/s/AKfycbx6rUYSmR2YALd9O5BnMLn8hD_JyxqEuJ_IxzxcIV25jrI-8mbtxp5Fa3gsEt2BqdZf/exec";
 
-// ── STEPS META ─────────────────────────────────────────────
 const STEPS = [
   {icon:'🏢',label:'Customer'},{icon:'🔧',label:'Firmware'},{icon:'💾',label:'Volume/Disk'},
   {icon:'❤️',label:'Health'},{icon:'⚡',label:'Performance'},{icon:'🗄️',label:'Backup'},
@@ -819,13 +428,15 @@ const STEPS = [
 let currentStep = 0;
 const totalSteps = 12;
 
-// Build sidebar
 const stepList = document.getElementById('stepList');
 STEPS.forEach((s,i) => {
   stepList.innerHTML += `<div class="step-item${i===0?' active':''}" id="step-item-${i}" onclick="goTo(${i})">
     <div class="step-num" id="step-num-${i}">${i+1}</div>
     <div class="step-text">${s.icon} ${s.label}</div></div>`;
 });
+
+// ── FIX: track canvas init state ─────────────────────────
+const canvasReady = { tech: false, cust: false };
 
 function goTo(step) {
   document.querySelectorAll('.section-card').forEach((s,i) => s.classList.toggle('active', i===step));
@@ -843,19 +454,30 @@ function goTo(step) {
   document.getElementById('navInfo').textContent = `Step ${step+1} of ${totalSteps}`;
   document.getElementById('topStepBadge').textContent = `Step ${step+1} of ${totalSteps}`;
   window.scrollTo({top:0, behavior:'smooth'});
+
+  // ── FIX: init canvases when step 11 becomes visible ────
+  if (step === 11) {
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        if (!canvasReady.tech) { initCanvas('tech'); canvasReady.tech = true; }
+        else resizeCanvas('tech');
+        if (!canvasReady.cust) { initCanvas('cust'); canvasReady.cust = true; }
+        else resizeCanvas('cust');
+      }, 80);
+    });
+  }
 }
+
 function nextStep(){ if(currentStep<totalSteps-1) goTo(currentStep+1); }
 function prevStep(){ if(currentStep>0) goTo(currentStep-1); }
 
-// ── INIT ──────────────────────────────────────────────────
 window.addEventListener('load', () => {
   const now = new Date();
   document.getElementById('monthYear').value = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
   document.getElementById('techSignedDate').value = now.toISOString().split('T')[0];
   const next = new Date(now.getFullYear(), now.getMonth()+1, 1);
   document.getElementById('nextMaintenance').value = next.toISOString().split('T')[0];
-  initCanvas('tech');
-  initCanvas('cust');
+  // DO NOT init canvases here — they are hidden and have 0 width
 });
 
 function calcFree(){
@@ -864,7 +486,6 @@ function calcFree(){
   document.getElementById('freeCapacity').value = Math.max(0,t-u).toFixed(2);
 }
 
-// ── DYNAMIC TABLES ────────────────────────────────────────
 function addShareRow(){
   const tbody = document.getElementById('shareTbody');
   const tr = document.createElement('tr');
@@ -882,6 +503,7 @@ function addUserRow(){
   tbody.appendChild(tr);
 }
 function delRow(btn){ btn.closest('tr').remove(); }
+
 function getShareFolders(){
   return Array.from(document.querySelectorAll('#shareTbody tr')).map(tr=>{
     const inp = tr.querySelectorAll('input');
@@ -896,70 +518,105 @@ function getUserAccess(){
 }
 
 // ── SIGNATURE PAD ─────────────────────────────────────────
-const sigState = { tech:{drawing:false,lastX:0,lastY:0,mode:'draw'}, cust:{drawing:false,lastX:0,lastY:0,mode:'draw'} };
+const sigState = {
+  tech:{drawing:false,lastX:0,lastY:0,mode:'draw'},
+  cust:{drawing:false,lastX:0,lastY:0,mode:'draw'}
+};
+
+// ── FIX: separate resize from full init ──────────────────
+function resizeCanvas(id) {
+  const canvas = document.getElementById(id+'Canvas');
+  const ctx = canvas.getContext('2d');
+  const ratio = window.devicePixelRatio||1;
+  const rect = canvas.getBoundingClientRect();
+  if (rect.width === 0) return; // still hidden, skip
+  canvas.width = rect.width * ratio;
+  canvas.height = 110 * ratio;
+  ctx.scale(ratio, ratio);
+  ctx.strokeStyle='#1a237e'; ctx.lineWidth=2.2;
+  ctx.lineCap='round'; ctx.lineJoin='round';
+}
+
 function initCanvas(id){
   const canvas = document.getElementById(id+'Canvas');
   const ctx = canvas.getContext('2d');
+
   function resize(){
     const ratio = window.devicePixelRatio||1;
     const rect = canvas.getBoundingClientRect();
+    if (rect.width === 0) return; // guard against hidden canvas
     canvas.width = rect.width*ratio;
     canvas.height = 110*ratio;
     ctx.scale(ratio,ratio);
-    ctx.strokeStyle='#1a237e';ctx.lineWidth=2.2;ctx.lineCap='round';ctx.lineJoin='round';
+    ctx.strokeStyle='#1a237e'; ctx.lineWidth=2.2;
+    ctx.lineCap='round'; ctx.lineJoin='round';
   }
-  setTimeout(resize,50);
+  resize();
   window.addEventListener('resize',()=>{ setTimeout(resize,50); });
+
   function getPos(e){
     const rect=canvas.getBoundingClientRect();
     const src=e.touches?e.touches[0]:e;
-    return{x:src.clientX-rect.left,y:src.clientY-rect.top};
+    return{x:src.clientX-rect.left, y:src.clientY-rect.top};
   }
   canvas.addEventListener('mousedown',e=>{
     const p=getPos(e); sigState[id].drawing=true;
     sigState[id].lastX=p.x; sigState[id].lastY=p.y;
-    ctx.beginPath();ctx.arc(p.x,p.y,1,0,Math.PI*2);ctx.fillStyle='#1a237e';ctx.fill();
+    ctx.beginPath(); ctx.arc(p.x,p.y,1,0,Math.PI*2);
+    ctx.fillStyle='#1a237e'; ctx.fill();
   });
   canvas.addEventListener('mousemove',e=>{
     if(!sigState[id].drawing)return;
     const p=getPos(e);
-    ctx.beginPath();ctx.moveTo(sigState[id].lastX,sigState[id].lastY);
-    ctx.lineTo(p.x,p.y);ctx.stroke();
-    sigState[id].lastX=p.x;sigState[id].lastY=p.y;
+    ctx.beginPath(); ctx.moveTo(sigState[id].lastX,sigState[id].lastY);
+    ctx.lineTo(p.x,p.y); ctx.stroke();
+    sigState[id].lastX=p.x; sigState[id].lastY=p.y;
   });
-  const stop=()=>{ if(!sigState[id].drawing)return; sigState[id].drawing=false; updatePreview(id); };
-  canvas.addEventListener('mouseup',stop);canvas.addEventListener('mouseleave',stop);
-  canvas.addEventListener('touchstart',e=>{e.preventDefault();
-    const p=getPos(e);sigState[id].drawing=true;sigState[id].lastX=p.x;sigState[id].lastY=p.y;
-  },{passive:false});
-  canvas.addEventListener('touchmove',e=>{e.preventDefault();
+  const stop=()=>{
     if(!sigState[id].drawing)return;
-    const p=getPos(e);ctx.beginPath();ctx.moveTo(sigState[id].lastX,sigState[id].lastY);
-    ctx.lineTo(p.x,p.y);ctx.stroke();sigState[id].lastX=p.x;sigState[id].lastY=p.y;
+    sigState[id].drawing=false; updatePreview(id);
+  };
+  canvas.addEventListener('mouseup',stop);
+  canvas.addEventListener('mouseleave',stop);
+  canvas.addEventListener('touchstart',e=>{
+    e.preventDefault();
+    const p=getPos(e); sigState[id].drawing=true;
+    sigState[id].lastX=p.x; sigState[id].lastY=p.y;
+  },{passive:false});
+  canvas.addEventListener('touchmove',e=>{
+    e.preventDefault();
+    if(!sigState[id].drawing)return;
+    const p=getPos(e);
+    ctx.beginPath(); ctx.moveTo(sigState[id].lastX,sigState[id].lastY);
+    ctx.lineTo(p.x,p.y); ctx.stroke();
+    sigState[id].lastX=p.x; sigState[id].lastY=p.y;
   },{passive:false});
   canvas.addEventListener('touchend',stop);
 }
+
 function switchMode(id,mode,btn){
   sigState[id].mode=mode;
   btn.closest('.sig-controls').querySelectorAll('.sig-btn:not(.clear)').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById(id+'-canvas-area').style.display=mode==='draw'?'block':'none';
   document.getElementById(id+'-type-area').style.display=mode==='type'?'block':'none';
-  if(mode==='type')renderTyped(id);
+  if(mode==='type') renderTyped(id);
 }
+
 function renderTyped(id){
   const name=document.getElementById(id+'Typed').value;
   const canvas=document.getElementById(id+'Canvas');
   const ctx=canvas.getContext('2d');
   const ratio=window.devicePixelRatio||1;
-  const w=canvas.width/ratio,h=canvas.height/ratio;
+  const w=canvas.width/ratio, h=canvas.height/ratio;
   ctx.clearRect(0,0,canvas.width,canvas.height);
   if(!name)return;
   ctx.font=`italic ${Math.min(48,w/(name.length*0.55))}px 'Brush Script MT',cursive`;
-  ctx.fillStyle='#1a237e';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillStyle='#1a237e'; ctx.textAlign='center'; ctx.textBaseline='middle';
   ctx.fillText(name,w/2,h/2);
   updatePreview(id);
 }
+
 function clearSig(id){
   const canvas=document.getElementById(id+'Canvas');
   const ctx=canvas.getContext('2d');
@@ -968,22 +625,38 @@ function clearSig(id){
   if(ti)ti.value='';
   document.getElementById(id+'Preview').innerHTML='<span style="font-size:10px;color:#bbb;">Signature will appear here</span>';
 }
+
 function updatePreview(id){
   const canvas=document.getElementById(id+'Canvas');
   if(isCanvasEmpty(canvas))return;
   document.getElementById(id+'Preview').innerHTML=`<img src="${canvas.toDataURL('image/png')}" style="max-height:34px;">`;
 }
+
+// ── FIX: safe isCanvasEmpty — guards against 0-size canvas ──
 function isCanvasEmpty(canvas){
-  const d=canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data;
-  return !d.some((v,i)=>i%4===3&&v>0);
+  try {
+    if (!canvas || canvas.width === 0 || canvas.height === 0) return true;
+    const d = canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data;
+    return !d.some((v,i)=>i%4===3&&v>0);
+  } catch(e) {
+    return true; // treat error as empty (no signature)
+  }
 }
+
+// ── FIX: getSig forces resize if canvas still 0-width ────
 function getSig(id){
-  const canvas=document.getElementById(id+'Canvas');
-  return isCanvasEmpty(canvas)?'':canvas.toDataURL('image/png');
+  const canvas = document.getElementById(id+'Canvas');
+  if (!canvas) return '';
+  if (canvas.width === 0 || canvas.height === 0) {
+    resizeCanvas(id); // last-chance resize
+  }
+  if (canvas.width === 0 || canvas.height === 0) return ''; // still 0, give up
+  return isCanvasEmpty(canvas) ? '' : canvas.toDataURL('image/png');
 }
 
 // ── HELPERS ───────────────────────────────────────────────
 function g(id){ return (document.getElementById(id)||{}).value||''; }
+
 function getData(){
   const monthRaw = g('monthYear');
   let monthYearDisplay = monthRaw;
@@ -1026,7 +699,6 @@ function getData(){
 }
 
 // ── SUBMIT TO GOOGLE APPS SCRIPT ──────────────────────────
-// Uses the hardcoded GAS_BACKEND_URL constant — no user input needed
 async function submitToGAS(r) {
   document.getElementById('overlayText').textContent = 'Saving to Google Drive...';
   try {
@@ -1038,32 +710,18 @@ async function submitToGAS(r) {
     const result = await response.json();
     if(result.success){
       ['pdfDownloadBtn','pdfDriveBtn'].forEach(id=>{ const el=document.getElementById(id); if(el)el.remove(); });
-
       const navBtns = document.getElementById('btnSubmit').parentNode;
-
       const dlBtn = document.createElement('a');
-      dlBtn.id = 'pdfDownloadBtn';
-      dlBtn.href = result.downloadUrl;
-      dlBtn.target = '_blank';
+      dlBtn.id = 'pdfDownloadBtn'; dlBtn.href = result.downloadUrl; dlBtn.target = '_blank';
       dlBtn.textContent = '⬇️ Download from Drive';
-      dlBtn.style.cssText = `display:inline-flex;align-items:center;gap:6px;padding:10px 18px;
-        background:linear-gradient(135deg,#1a237e,#3949ab);color:white;font-size:13px;font-weight:600;
-        font-family:'DM Sans',sans-serif;border-radius:8px;text-decoration:none;
-        box-shadow:0 4px 14px rgba(26,35,126,0.3);`;
-
+      dlBtn.style.cssText = `display:inline-flex;align-items:center;gap:6px;padding:10px 18px;background:linear-gradient(135deg,#1a237e,#3949ab);color:white;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;border-radius:8px;text-decoration:none;box-shadow:0 4px 14px rgba(26,35,126,0.3);`;
       const driveBtn = document.createElement('a');
-      driveBtn.id = 'pdfDriveBtn';
-      driveBtn.href = result.driveUrl;
-      driveBtn.target = '_blank';
+      driveBtn.id = 'pdfDriveBtn'; driveBtn.href = result.driveUrl; driveBtn.target = '_blank';
       driveBtn.textContent = '📁 View in Drive';
       driveBtn.style.cssText = dlBtn.style.cssText.replace('#3949ab','#2e7d32').replace('#1a237e','#2e7d32');
-
-      navBtns.appendChild(dlBtn);
-      navBtns.appendChild(driveBtn);
+      navBtns.appendChild(dlBtn); navBtns.appendChild(driveBtn);
       showToast('✅ PDF saved to Google Drive!','ok');
-    } else {
-      throw new Error(result.error || 'Unknown GAS error');
-    }
+    } else { throw new Error(result.error || 'Unknown GAS error'); }
   } catch(err){
     showToast('⚠️ Drive save failed: '+err.message+' — PDF was downloaded locally.','err');
     console.error(err);
@@ -1077,10 +735,8 @@ async function generatePDF(){
 
   const overlay = document.getElementById('overlay');
   const btnSubmit = document.getElementById('btnSubmit');
-  overlay.classList.add('show');
-  btnSubmit.disabled = true;
+  overlay.classList.add('show'); btnSubmit.disabled = true;
   document.getElementById('overlayText').textContent = 'Generating PDF...';
-
   await new Promise(r=>setTimeout(r,100));
 
   try {
@@ -1089,7 +745,6 @@ async function generatePDF(){
     const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
     const W=210, pL=14, pR=14, cW=W-pL-pR;
     let y=0;
-
     const navy=[26,35,126], indigo=[57,73,171];
     const green=[46,125,50], greenBg=[232,245,233];
     const red=[198,40,40], redBg=[255,235,238];
@@ -1101,33 +756,23 @@ async function generatePDF(){
       if(okVals.some(o=>v.includes(o.toLowerCase()))) return {fg:green, bg:greenBg};
       return {fg:red, bg:redBg};
     }
-
-    // ── HEADER ──
     doc.setFillColor(...navy); doc.rect(0,0,W,32,'F');
     doc.setFillColor(57,73,171); doc.rect(0,26,W,6,'F');
     doc.setTextColor(255,255,255);
     doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.text('NETGEAR READYNAS',pL,9);
-    doc.setFont('helvetica','bold'); doc.setFontSize(16); doc.text('Monthly Maintenance Report',pL,17);
+    doc.setFont('orange','bold'); doc.setFontSize(16); doc.text('WTIPL Monthly Maintenance Report',pL,17);
     doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.text('Comprehensive System Health & Status Analysis',pL,23);
     doc.text(r.monthYear||'',W-pR,9,{align:'right'});
     doc.text('Report ID: '+r.reportId,W-pR,14,{align:'right'});
     doc.text('Date: '+r.reportDate,W-pR,19,{align:'right'});
     doc.text('Tech: '+(r.techName||''),W-pR,24,{align:'right'});
     y=33;
-
-    // ── CUSTOMER BANNER ──
     doc.setFillColor(232,234,246); doc.rect(0,y,W,18,'F');
     doc.setDrawColor(57,73,171); doc.setLineWidth(1); doc.line(0,y,0,y+18); doc.setLineWidth(0.1);
-    const cFields=[['Company',r.companyName],['Contact',r.contactName||'—'],['NAS Model',r.nasModel||'—'],
-      ['Location',r.location||'—'],['Contract #',r.contractNo||'—'],['Next Maintenance',r.nextMaintenance||'—']];
+    const cFields=[['Company',r.companyName],['Contact',r.contactName||'—'],['NAS Model',r.nasModel||'—'],['Location',r.location||'—'],['Contract #',r.contractNo||'—'],['Next Maintenance',r.nextMaintenance||'—']];
     const cw2=cW/6;
-    cFields.forEach((cf,i)=>{
-      const cx=pL+i*cw2;
-      doc.setFont('helvetica','bold'); doc.setFontSize(7); doc.setTextColor(...indigo); doc.text(cf[0].toUpperCase(),cx,y+5);
-      doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(...navy); doc.text(String(cf[1]||'—').substring(0,14),cx,y+13);
-    });
+    cFields.forEach((cf,i)=>{ const cx=pL+i*cw2; doc.setFont('helvetica','bold'); doc.setFontSize(7); doc.setTextColor(...indigo); doc.text(cf[0].toUpperCase(),cx,y+5); doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(...navy); doc.text(String(cf[1]||'—').substring(0,14),cx,y+13); });
     y+=20;
-
     function sectionHeader(title, icon=''){
       doc.setFillColor(...navy); doc.rect(0,y,W,7,'F');
       doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(255,255,255);
@@ -1151,48 +796,31 @@ async function generatePDF(){
       statusBadge(value,okVals,pL+65,y+3.8,40);
       doc.setDrawColor(224,224,224); doc.setLineWidth(0.1); doc.line(0,y+5.5,W,y+5.5); y+=5.5;
     }
-    function checkPage(needed=30){
-      if(y+needed>285){ doc.addPage(); y=10; }
-    }
+    function checkPage(needed=30){ if(y+needed>285){ doc.addPage(); y=10; } }
 
-    // ── KPI SUMMARY ──
     sectionHeader('System Overview','📊');
-    const kpis=[['Uptime',r.systemUptime+'d'],['CPU',r.cpuUsage+'%'],['RAM',r.ramUsage+'%'],
-      ['Temp',r.temperature+'°C'],['Errors',r.errorCount||'0'],['Warnings',r.warningCount||'0']];
+    const kpis=[['Uptime',r.systemUptime+'d'],['CPU',r.cpuUsage+'%'],['RAM',r.ramUsage+'%'],['Temp',r.temperature+'°C'],['Errors',r.errorCount||'0'],['Warnings',r.warningCount||'0']];
     const kpiW=cW/6;
-    kpis.forEach((k,i)=>{
-      const kx=pL+i*kpiW;
-      doc.setFillColor(245,246,252); doc.roundedRect(kx,y,kpiW-2,14,2,2,'F');
-      doc.setDrawColor(57,73,171); doc.setLineWidth(0.8); doc.line(kx,y,kx+kpiW-2,y); doc.setLineWidth(0.1);
-      doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(...navy); doc.text(String(k[1]||'—'),kx+(kpiW-2)/2,y+7,{align:'center'});
-      doc.setFont('helvetica','normal'); doc.setFontSize(6.5); doc.setTextColor(...muted); doc.text(k[0],kx+(kpiW-2)/2,y+12,{align:'center'});
-    });
+    kpis.forEach((k,i)=>{ const kx=pL+i*kpiW; doc.setFillColor(245,246,252); doc.roundedRect(kx,y,kpiW-2,14,2,2,'F'); doc.setDrawColor(57,73,171); doc.setLineWidth(0.8); doc.line(kx,y,kx+kpiW-2,y); doc.setLineWidth(0.1); doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(...navy); doc.text(String(k[1]||'—'),kx+(kpiW-2)/2,y+7,{align:'center'}); doc.setFont('helvetica','normal'); doc.setFontSize(6.5); doc.setTextColor(...muted); doc.text(k[0],kx+(kpiW-2)/2,y+12,{align:'center'}); });
     y+=17;
-
     const total=parseFloat(r.totalCapacity)||0, used=parseFloat(r.usedCapacity)||0;
     const usedPct=total>0?Math.min(100,Math.round(used/total*100)):0;
     const barColor=usedPct>85?[198,40,40]:usedPct>70?[230,81,0]:[21,101,192];
     doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(...muted);
     doc.text(`Storage Utilization — ${r.volumeName||'Volume'}`,pL,y+3.5);
     doc.text(`${r.usedCapacity||0} TB / ${r.totalCapacity||0} TB (${usedPct}%)`,W-pR,y+3.5,{align:'right'});
-    y+=5;
-    doc.setFillColor(224,224,224); doc.roundedRect(pL,y,cW,4,1,1,'F');
+    y+=5; doc.setFillColor(224,224,224); doc.roundedRect(pL,y,cW,4,1,1,'F');
     if(usedPct>0){ doc.setFillColor(...barColor); doc.roundedRect(pL,y,cW*usedPct/100,4,1,1,'F'); }
     y+=7; checkPage(40);
 
     sectionHeader('Firmware','🔧');
-    infoRow('Current Version',r.currentFirmware,false);
-    infoRow('Available Version',r.availableFirmware,true);
-    infoBadgeRow('Status',r.firmwareStatus,['Up-to-date','Current','OK'],false);
-    y+=3; checkPage(40);
+    infoRow('Current Version',r.currentFirmware,false); infoRow('Available Version',r.availableFirmware,true);
+    infoBadgeRow('Status',r.firmwareStatus,['Up-to-date','Current','OK'],false); y+=3; checkPage(40);
 
     sectionHeader('Volume & Disk Configuration','💾');
-    infoRow('Volume Name',r.volumeName,false);
-    infoRow('Disk Type / RAID',`${r.diskType||'—'} / ${r.raidType||'—'}`,true);
+    infoRow('Volume Name',r.volumeName,false); infoRow('Disk Type / RAID',`${r.diskType||'—'} / ${r.raidType||'—'}`,true);
     infoBadgeRow('Volume Status',r.volumeStatus,['Healthy','OK','Normal'],false);
-    infoRow('HDD Model',r.hddModel,true);
-    infoRow('HDD Serial Number',r.hddSN,false);
-    infoRow('Number of Disks',r.noOfDisks,true);
+    infoRow('HDD Model',r.hddModel,true); infoRow('HDD Serial Number',r.hddSN,false); infoRow('Number of Disks',r.noOfDisks,true);
     y+=3; checkPage(40);
 
     sectionHeader('Health Status','❤️');
@@ -1200,80 +828,53 @@ async function generatePDF(){
     infoBadgeRow('System Health',r.systemHealth,['Good','Healthy','Normal','OK'],true);
     infoBadgeRow('SMART Status',r.smartStatus,['Passed','OK','Normal'],false);
     infoRow('Temperature',r.temperature+'°C',true);
-    infoBadgeRow('Fan Status',r.fanStatus,['Normal','OK','Good'],false);
-    y+=3; checkPage(50);
+    infoBadgeRow('Fan Status',r.fanStatus,['Normal','OK','Good'],false); y+=3; checkPage(50);
 
     sectionHeader('Performance','⚡');
-    const perfKpis=[['Read Speed',r.avgReadSpeed+' MB/s'],['Write Speed',r.avgWriteSpeed+' MB/s'],
-      ['CPU Load',r.cpuUsage+'%'],['RAM Load',r.ramUsage+'%']];
+    const perfKpis=[['Read Speed',r.avgReadSpeed+' MB/s'],['Write Speed',r.avgWriteSpeed+' MB/s'],['CPU Load',r.cpuUsage+'%'],['RAM Load',r.ramUsage+'%']];
     const pKpiW=cW/4;
-    perfKpis.forEach((k,i)=>{
-      const kx=pL+i*pKpiW;
-      doc.setFillColor(245,246,252); doc.roundedRect(kx,y,pKpiW-2,12,2,2,'F');
-      doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(...navy); doc.text(String(k[1]||'—'),kx+(pKpiW-2)/2,y+6,{align:'center'});
-      doc.setFont('helvetica','normal'); doc.setFontSize(6.5); doc.setTextColor(...muted); doc.text(k[0],kx+(pKpiW-2)/2,y+10,{align:'center'});
-    });
+    perfKpis.forEach((k,i)=>{ const kx=pL+i*pKpiW; doc.setFillColor(245,246,252); doc.roundedRect(kx,y,pKpiW-2,12,2,2,'F'); doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(...navy); doc.text(String(k[1]||'—'),kx+(pKpiW-2)/2,y+6,{align:'center'}); doc.setFont('helvetica','normal'); doc.setFontSize(6.5); doc.setTextColor(...muted); doc.text(k[0],kx+(pKpiW-2)/2,y+10,{align:'center'}); });
     y+=15; checkPage(40);
 
     sectionHeader('Local / USB Backup','🗄️');
     infoBadgeRow('Backup Enabled',r.localBackupEnabled,['Yes','Enabled'],false);
-    infoRow('USB Device',r.usbDevice,true);
-    infoRow('Last Backup Date',r.lastLocalBackup,false);
+    infoRow('USB Device',r.usbDevice,true); infoRow('Last Backup Date',r.lastLocalBackup,false);
     infoBadgeRow('Backup Status',r.localBackupStatus,['Success','OK','Completed'],true);
     infoRow('Backup Size',r.localBackupSize?r.localBackupSize+' GB':'—',false);
-    if(r.localBackupLog) infoRow('Log Notes',r.localBackupLog.substring(0,60),true);
-    y+=3; checkPage(40);
+    if(r.localBackupLog) infoRow('Log Notes',r.localBackupLog.substring(0,60),true); y+=3; checkPage(40);
 
     sectionHeader('Cloud Backup','☁️');
     infoBadgeRow('Backup Enabled',r.cloudBackupEnabled,['Yes','Enabled'],false);
-    infoRow('Cloud Provider',r.cloudProvider,true);
-    infoRow('Last Backup Date',r.lastCloudBackup,false);
+    infoRow('Cloud Provider',r.cloudProvider,true); infoRow('Last Backup Date',r.lastCloudBackup,false);
     infoBadgeRow('Backup Status',r.cloudBackupStatus,['Success','OK','Completed'],true);
-    infoRow('Backup Size',r.cloudBackupSize?r.cloudBackupSize+' GB':'—',false);
-    y+=3; checkPage(40);
+    infoRow('Backup Size',r.cloudBackupSize?r.cloudBackupSize+' GB':'—',false); y+=3; checkPage(40);
 
     sectionHeader('Microsoft 365 Cloud Backup','🏢');
     infoBadgeRow('M365 Backup Enabled',r.ms365Enabled,['Yes','Enabled'],false);
-    infoRow('Last Backup Date',r.ms365LastBackup,true);
-    infoRow('Items Backed Up',r.ms365Items,false);
-    infoBadgeRow('Backup Status',r.ms365Status,['Success','OK','Completed'],true);
-    y+=3; checkPage(30);
+    infoRow('Last Backup Date',r.ms365LastBackup,true); infoRow('Items Backed Up',r.ms365Items,false);
+    infoBadgeRow('Backup Status',r.ms365Status,['Success','OK','Completed'],true); y+=3; checkPage(30);
 
     sectionHeader('Email Alert Test','📧');
     infoBadgeRow('Test Email Sent',r.emailAlertSent,['Yes','Sent'],false);
     infoBadgeRow('Test Result',r.emailAlertResult,['Success','OK','Received'],true);
-    infoRow('Recipients',r.alertRecipients,false);
-    y+=3; checkPage(30);
+    infoRow('Recipients',r.alertRecipients,false); y+=3; checkPage(30);
 
     sectionHeader('Log Review','📋');
     infoBadgeRow('Log Status',r.systemLogStatus,['Reviewed','Clean','OK'],false);
-    infoRow('Errors (30d)',r.errorCount||'0',true);
-    infoRow('Warnings (30d)',r.warningCount||'0',false);
+    infoRow('Errors (30d)',r.errorCount||'0',true); infoRow('Warnings (30d)',r.warningCount||'0',false);
     infoRow('Critical Events',r.criticalEvents||'None',true);
-    if(r.logNotes) infoRow('Notes',r.logNotes.substring(0,80),false);
-    y+=3; checkPage(40);
+    if(r.logNotes) infoRow('Notes',r.logNotes.substring(0,80),false); y+=3; checkPage(40);
 
     if(r.shareFolders.length>0){
       checkPage(20); sectionHeader('Share Folder Details','📁');
-      doc.autoTable({
-        startY:y, head:[['Folder Name','Department','Size','Files','Permissions']],
-        body:r.shareFolders.map(f=>[f.name,f.dept,f.size,f.files,f.permissions]),
-        styles:{fontSize:8,cellPadding:3}, headStyles:{fillColor:navy,fontStyle:'bold',fontSize:7.5},
-        alternateRowStyles:{fillColor:[248,249,255]}, margin:{left:0,right:0}, tableWidth:W,
-      });
+      doc.autoTable({ startY:y, head:[['Folder Name','Department','Size','Files','Permissions']], body:r.shareFolders.map(f=>[f.name,f.dept,f.size,f.files,f.permissions]), styles:{fontSize:8,cellPadding:3}, headStyles:{fillColor:navy,fontStyle:'bold',fontSize:7.5}, alternateRowStyles:{fillColor:[248,249,255]}, margin:{left:0,right:0}, tableWidth:W });
       y=doc.lastAutoTable.finalY+4;
     }
-
     if(r.userAccess.length>0){
       checkPage(20); sectionHeader('User & Group Access','👥');
       doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(...muted);
       doc.text(`Total Users: ${r.userCount||'—'}   |   Total Groups: ${r.groupCount||'—'}`,pL,y+3.5); y+=6;
-      doc.autoTable({
-        startY:y, head:[['Group Name','Users','Access Level','Shared Folders']],
-        body:r.userAccess.map(u=>[u.group,u.users,u.access,u.shares]),
-        styles:{fontSize:8,cellPadding:3}, headStyles:{fillColor:navy,fontStyle:'bold',fontSize:7.5},
-        alternateRowStyles:{fillColor:[248,249,255]}, margin:{left:0,right:0}, tableWidth:W,
-      });
+      doc.autoTable({ startY:y, head:[['Group Name','Users','Access Level','Shared Folders']], body:r.userAccess.map(u=>[u.group,u.users,u.access,u.shares]), styles:{fontSize:8,cellPadding:3}, headStyles:{fillColor:navy,fontStyle:'bold',fontSize:7.5}, alternateRowStyles:{fillColor:[248,249,255]}, margin:{left:0,right:0}, tableWidth:W });
       y=doc.lastAutoTable.finalY+4;
     }
 
@@ -1281,8 +882,7 @@ async function generatePDF(){
     infoRow('IP Address',r.ipAddress,false); infoRow('Subnet Mask',r.subnetMask,true);
     infoRow('Default Gateway',r.gateway,false); infoRow('DNS Server',r.dns,true);
     infoRow('Link Speed',r.linkSpeed,false); infoRow('Jumbo Frames',r.jumboFrames,true);
-    infoBadgeRow('Network Status',r.networkStatus,['Connected','OK','Up','Online'],false);
-    y+=3;
+    infoBadgeRow('Network Status',r.networkStatus,['Connected','OK','Up','Online'],false); y+=3;
 
     if(r.actionItems){
       checkPage(25);
@@ -1307,11 +907,7 @@ async function generatePDF(){
     doc.text('SERVICE TECHNICIAN',pL+3,sigY+5);
     const tSig=r.techSig;
     if(tSig){ try{ doc.addImage(tSig,'PNG',pL+3,sigY+7,sigW-6,18,'','FAST'); }catch(e){} }
-    else {
-      doc.setFillColor(245,245,250); doc.roundedRect(pL+3,sigY+7,sigW-6,18,1,1,'F');
-      doc.setFont('helvetica','italic'); doc.setFontSize(7); doc.setTextColor(180,180,180);
-      doc.text('No signature captured',pL+sigW/2,sigY+17,{align:'center'});
-    }
+    else { doc.setFillColor(245,245,250); doc.roundedRect(pL+3,sigY+7,sigW-6,18,1,1,'F'); doc.setFont('helvetica','italic'); doc.setFontSize(7); doc.setTextColor(180,180,180); doc.text('No signature captured',pL+sigW/2,sigY+17,{align:'center'}); }
     doc.setDrawColor(...navy); doc.setLineWidth(0.5); doc.line(pL+3,sigY+27,pL+sigW-3,sigY+27); doc.setLineWidth(0.1);
     doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(...navy); doc.text(r.techName||'—',pL+3,sigY+32);
     doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(...muted);
@@ -1323,14 +919,9 @@ async function generatePDF(){
     doc.text('CUSTOMER AUTHORIZATION',cx2+3,sigY+5);
     const cSig=r.custSig;
     if(cSig){ try{ doc.addImage(cSig,'PNG',cx2+3,sigY+7,sigW-6,18,'','FAST'); }catch(e){} }
-    else {
-      doc.setFillColor(245,245,250); doc.roundedRect(cx2+3,sigY+7,sigW-6,18,1,1,'F');
-      doc.setFont('helvetica','italic'); doc.setFontSize(7); doc.setTextColor(180,180,180);
-      doc.text('Awaiting customer signature',cx2+sigW/2,sigY+17,{align:'center'});
-    }
+    else { doc.setFillColor(245,245,250); doc.roundedRect(cx2+3,sigY+7,sigW-6,18,1,1,'F'); doc.setFont('helvetica','italic'); doc.setFontSize(7); doc.setTextColor(180,180,180); doc.text('Awaiting customer signature',cx2+sigW/2,sigY+17,{align:'center'}); }
     doc.setDrawColor(...navy); doc.setLineWidth(0.5); doc.line(cx2+3,sigY+27,cx2+sigW-3,sigY+27); doc.setLineWidth(0.1);
-    doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(...navy);
-    doc.text(r.custSignatoryName||r.companyName||'—',cx2+3,sigY+32);
+    doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(...navy); doc.text(r.custSignatoryName||r.companyName||'—',cx2+3,sigY+32);
     doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(...muted);
     doc.text(r.custDesignation||'Authorized Representative',cx2+3,sigY+36);
     doc.text('Date: '+(r.custSignedDate||'—'),cx2+3,sigY+39.5);
@@ -1352,23 +943,17 @@ async function generatePDF(){
 
     const fileName=`NAS_Report_${(r.companyName||'Customer').replace(/\s+/g,'_')}_${(r.monthYear||'').replace(/\s+/g,'_')}_${r.reportId}.pdf`;
     doc.save(fileName);
-
-    // Always submit to the hardcoded backend
     await submitToGAS(r);
-
-    overlay.classList.remove('show');
-    btnSubmit.disabled = false;
+    overlay.classList.remove('show'); btnSubmit.disabled = false;
     showToast('✅ PDF downloaded successfully!','ok');
 
   } catch(err){
-    overlay.classList.remove('show');
-    btnSubmit.disabled = false;
+    overlay.classList.remove('show'); btnSubmit.disabled = false;
     showToast('❌ Error: '+err.message,'err');
     console.error(err);
   }
 }
 
-// ── TOAST ─────────────────────────────────────────────────
 function showToast(msg, type='ok'){
   const t=document.getElementById('toast');
   t.textContent=msg; t.className='toast '+type; t.style.display='block';
