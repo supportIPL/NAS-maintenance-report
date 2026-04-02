@@ -809,7 +809,7 @@ async function generatePDF(){
     const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
     const W=210, pL=14, pR=14, cW=W-pL-pR;
     let y=0;
-    const navy=[247,191,79], indigo=[247,191,79];
+    const navy=[26,35,126], indigo=[57,73,171];
     const green=[46,125,50], greenBg=[232,245,233];
     const red=[198,40,40], redBg=[255,235,238];
     const amber=[230,81,0], amberBg=[255,248,225];
@@ -1048,7 +1048,7 @@ async function generatePDF(){
       doc.setPage(p);
       doc.setFillColor(...navy); doc.rect(0,287,W,10,'F');
       doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(0,0,0);
-      doc.text(`Report ID: ${r.reportId}  |  Generated: ${new Date().toLocaleString()}  |  Confidential`,pL,293);
+      doc.text(`Report ID: WTIPL  |  Generated: ${new Date().toLocaleString()}  |  Confidential`,pL,293);
       doc.text(`Netgear ReadyNAS Monthly Maintenance  |  ${r.companyName||''}  |  Page ${p} of ${pageCount}`,W-pR,293,{align:'right'});
     }
 
